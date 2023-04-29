@@ -3,24 +3,33 @@ import 'package:flutter/material.dart';
 class CustomSwitch extends StatefulWidget {
   const CustomSwitch({
     Key? key,
-    this.onChanged,
-    this.trackColor,
     required this.value,
+    required this.onChanged,
+    this.activeTrackColor,
     this.selectedText = const Text('On'),
     this.defaultText = const Text('Off'),
     this.activeColor,
+    this.inactiveTrackColor,
+    this.inactiveThumbColor,
   }) : super(key: key);
 
-  final void Function(bool value)? onChanged;
-  final Color? trackColor;
+  final void Function(bool value) onChanged;
   final bool value;
+
   final Text? selectedText;
+
   final Text? defaultText;
 
   /// The color to use when this switch is on.
   ///
   /// Defaults to [ColorScheme.secondary].
   final Color? activeColor;
+
+  final Color? activeTrackColor;
+
+  final Color? inactiveTrackColor;
+
+  final Color? inactiveThumbColor;
 
   @override
   State<CustomSwitch> createState() => _CustomSwitchState();
@@ -70,7 +79,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
                   controller.stop();
                 });
               },
-              color: _color,
+              color: _inActiveColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
@@ -100,7 +109,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
                   controller.stop();
                 });
               },
-              color: widget.value ? Colors.cyan : Colors.transparent,
+              color: _activeColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
@@ -114,21 +123,43 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
 
   Color? get _getTrackColor {
     final colorScheme = Theme.of(context).colorScheme;
-    if (widget.trackColor != null) {
-      return widget.trackColor!;
+    if (widget.value) {
+      if (widget.activeTrackColor != null) {
+        return widget.activeTrackColor!;
+      }
+      if (widget.activeColor != null) {
+        return _activeColor.withOpacity(0.5);
+      }
+      return colorScheme.primary;
+    } else {
+      if (widget.inactiveTrackColor != null) {
+        return widget.inactiveTrackColor!;
+      }
+      return colorScheme.surfaceVariant;
     }
-    return colorScheme.onSecondary;
   }
 
-  Color get _color {
+  Color get _inActiveColor {
+    final colorScheme = Theme.of(context).colorScheme;
+    if (widget.activeColor != null) {
+      return inActiveState(color: widget.inactiveThumbColor!);
+    }
+    return inActiveState(color: colorScheme.outline);
+  }
+
+  Color get _activeColor {
     final colorScheme = Theme.of(context).colorScheme;
     if (widget.activeColor != null) {
       return activeState(color: widget.activeColor!);
     }
-    return colorScheme.secondary;
+    return activeState(color: colorScheme.onPrimary);
+  }
+
+  Color inActiveState({required Color color}) {
+    return !widget.value ? color : Colors.transparent;
   }
 
   Color activeState({required Color color}) {
-    return !widget.value ? color : Colors.transparent;
+    return widget.value ? color : Colors.transparent;
   }
 }
