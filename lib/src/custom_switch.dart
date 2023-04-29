@@ -39,6 +39,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
   late AnimationController controller;
   late Tween<double> tween;
   late CurvedAnimation animation;
+  late ColorScheme colorScheme;
 
   @override
   void initState() {
@@ -50,7 +51,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    colorScheme = Theme.of(context).colorScheme;
     return LayoutBuilder(builder: (context, constraint) {
       var width = constraint.maxWidth;
       return Container(
@@ -73,7 +74,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               disabledElevation: 0,
               splashColor: null,
               onPressed: () {
-                widget.onChanged!(false);
+                widget.onChanged(false);
                 controller.reset();
                 controller.forward().whenComplete(() {
                   controller.stop();
@@ -103,7 +104,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               disabledElevation: 0,
               splashColor: null,
               onPressed: () {
-                widget.onChanged!(true);
+                widget.onChanged(true);
                 controller.reset();
                 controller.forward().whenComplete(() {
                   controller.stop();
@@ -122,7 +123,6 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
   }
 
   Color? get _getTrackColor {
-    final colorScheme = Theme.of(context).colorScheme;
     if (widget.value) {
       if (widget.activeTrackColor != null) {
         return widget.activeTrackColor!;
@@ -140,7 +140,6 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
   }
 
   Color get _inActiveColor {
-    final colorScheme = Theme.of(context).colorScheme;
     if (widget.activeColor != null) {
       return inActiveState(color: widget.inactiveThumbColor!);
     }
@@ -148,7 +147,6 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
   }
 
   Color get _activeColor {
-    final colorScheme = Theme.of(context).colorScheme;
     if (widget.activeColor != null) {
       return activeState(color: widget.activeColor!);
     }
