@@ -11,13 +11,15 @@ Customized Switch
 Add to your [pubspec.yaml](pubspec.yaml) file the dependency:
 
 ```yaml
+
 dependencies:
   flutter:
     sdk: flutter
 
   riff_switch:
-    git: git@github.com:kenresoft/riff_switch.git
-    ref: release
+    git: 
+      url: git@github.com:kenresoft/riff_switch.git
+      ref: release
 
 ```
 
