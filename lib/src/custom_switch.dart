@@ -6,17 +6,12 @@ class CustomSwitch extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.activeTrackColor,
-    this.selectedText = const Text('On'),
-    this.defaultText = const Text('Off'),
+    this.activeText = const Text('ON'),
+    this.inactiveText = const Text('OFF'),
     this.activeColor,
     this.inactiveTrackColor,
     this.inactiveThumbColor,
   }) : super(key: key);
-
-
-  /// PLEASE EDIT THIS DOCUMENTATION. REMOVE UNNECESSARY LINES THAT ARE NOT RELEVANT TO THIS CURRENT PACKAGE.
-
-
 
   /// Whether this switch is on or off.
   ///
@@ -67,9 +62,15 @@ class CustomSwitch extends StatefulWidget {
   /// Defaults to the colors described in the Material design specification.
   final Color? inactiveTrackColor;
 
-  final Text? selectedText;
+  /// The text widget acting as the thumb when this switch is on.
+  ///
+  /// Defaults to [const Text("ON")].
+  final Text? activeText;
 
-  final Text? defaultText;
+  /// The text widget acting as the thumb when this switch is off.
+  ///
+  /// Defaults to [const Text("OFF")].
+  final Text? inactiveText;
 
   @override
   State<CustomSwitch> createState() => _CustomSwitchState();
@@ -124,7 +125,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
-              child: widget.defaultText,
+              child: widget.inactiveText,
             ),
           ),
           AnimatedBuilder(
@@ -154,7 +155,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
-              child: widget.selectedText,
+              child: widget.activeText,
             ),
           ),
         ]),
