@@ -6,15 +6,15 @@ class CustomSwitch extends StatefulWidget {
     this.onChanged,
     required this.trackColor,
     required this.value,
-    required this.offText,
-    required this.onText,
+    required this.activatedText,
+    required this.disabledText,
   }) : super(key: key);
 
   final void Function(bool value)? onChanged;
   final Color trackColor;
   final bool value;
-  final Text offText;
-  final Text onText;
+  final Text activatedText;
+  final Text disabledText;
 
   @override
   State<CustomSwitch> createState() => _CustomSwitchState();
@@ -66,7 +66,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
-              child: widget.offText,
+              child: widget.activatedText,
             ),
           ),
           AnimatedBuilder(
@@ -95,7 +95,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
-              child: widget.onText,
+              child: widget.disabledText,
             ),
           ),
         ]),
