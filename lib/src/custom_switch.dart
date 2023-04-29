@@ -4,17 +4,23 @@ class CustomSwitch extends StatefulWidget {
   const CustomSwitch({
     Key? key,
     this.onChanged,
-    required this.trackColor,
+    this.trackColor,
     required this.value,
-    required this.activatedText,
-    required this.disabledText,
+    this.selectedText = const Text('On'),
+    this.defaultText = const Text('Off'),
+    this.activeColor,
   }) : super(key: key);
 
   final void Function(bool value)? onChanged;
-  final Color trackColor;
+  final Color? trackColor;
   final bool value;
-  final Text activatedText;
-  final Text disabledText;
+  final Text? selectedText;
+  final Text? defaultText;
+
+  /// The color to use when this switch is on.
+  ///
+  /// Defaults to [ColorScheme.secondary].
+  final Color? activeColor;
 
   @override
   State<CustomSwitch> createState() => _CustomSwitchState();
@@ -35,11 +41,12 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return LayoutBuilder(builder: (context, constraint) {
       var width = constraint.maxWidth;
       return Container(
         width: width,
-        decoration: BoxDecoration(color: widget.trackColor, borderRadius: BorderRadius.circular(25)),
+        decoration: BoxDecoration(color: _getTrackColor, borderRadius: BorderRadius.circular(25)),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           AnimatedBuilder(
             builder: (context, child) {
@@ -55,6 +62,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               focusElevation: 0,
               highlightElevation: 0,
               disabledElevation: 0,
+              splashColor: null,
               onPressed: () {
                 widget.onChanged!(false);
                 controller.reset();
@@ -62,11 +70,11 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
                   controller.stop();
                 });
               },
-              color: !widget.value ? Colors.cyan : Colors.transparent,
+              color: _color,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
-              child: widget.activatedText,
+              child: widget.defaultText,
             ),
           ),
           AnimatedBuilder(
@@ -84,6 +92,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               focusElevation: 0,
               highlightElevation: 0,
               disabledElevation: 0,
+              splashColor: null,
               onPressed: () {
                 widget.onChanged!(true);
                 controller.reset();
@@ -95,11 +104,31 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
-              child: widget.disabledText,
+              child: widget.selectedText,
             ),
           ),
         ]),
       );
     });
+  }
+
+  Color? get _getTrackColor {
+    final colorScheme = Theme.of(context).colorScheme;
+    if (widget.trackColor != null) {
+      return widget.trackColor!;
+    }
+    return colorScheme.onSecondary;
+  }
+
+  Color get _color {
+    final colorScheme = Theme.of(context).colorScheme;
+    if (widget.activeColor != null) {
+      return activeState(color: widget.activeColor!);
+    }
+    return colorScheme.secondary;
+  }
+
+  Color activeState({required Color color}) {
+    return !widget.value ? color : Colors.transparent;
   }
 }
