@@ -3,18 +3,74 @@ import 'package:flutter/material.dart';
 class CustomSwitch extends StatefulWidget {
   const CustomSwitch({
     Key? key,
-    this.onChanged,
-    required this.trackColor,
     required this.value,
-    required this.activatedText,
-    required this.disabledText,
+    required this.onChanged,
+    this.activeTrackColor,
+    this.activeText = const Text('ON'),
+    this.inactiveText = const Text('OFF'),
+    this.activeColor,
+    this.inactiveTrackColor,
+    this.inactiveThumbColor,
   }) : super(key: key);
 
-  final void Function(bool value)? onChanged;
-  final Color trackColor;
+  /// Whether this switch is on or off.
+  ///
+  /// This property must not be null.
   final bool value;
-  final Text activatedText;
-  final Text disabledText;
+
+  /// Called when the user toggles the switch on or off.
+  ///
+  /// The switch passes the new value to the callback but does not actually
+  /// change state until the parent widget rebuilds the switch with the new
+  /// value.
+  ///
+  /// If null, the switch will be displayed as disabled.
+  ///
+  /// The callback provided to [onChanged] should update the state of the parent
+  /// [StatefulWidget] using the [State.setState] method, so that the parent
+  /// gets rebuilt; for example:
+  ///
+  /// ```dart
+  /// Switch(
+  ///   value: _giveVerse,
+  ///   onChanged: (bool newValue) {
+  ///     setState(() {
+  ///       _giveVerse = newValue;
+  ///     });
+  ///   },
+  /// )
+  /// ```
+  final ValueChanged<bool>? onChanged;
+
+  /// The color to use when this switch is on.
+  ///
+  /// Defaults to [ColorScheme.onPrimary].
+  final Color? activeColor;
+
+  /// The color to use on the track when this switch is on.
+  ///
+  /// Defaults to [ColorScheme.onPrimary] with the opacity set at 50%.
+  final Color? activeTrackColor;
+
+  /// The color to use on the thumb when this switch is off.
+  ///
+  /// Defaults to the colors described in the Material design specification.
+  final Color? inactiveThumbColor;
+
+  /// The color to use on the track when this switch is off.
+  ///
+  /// Defaults to the colors described in the Material design specification.
+  final Color? inactiveTrackColor;
+
+  /// The text widget acting as the thumb when this switch is on.
+  ///
+  /// Defaults to [const Text("ON")].
+  final Text? activeText;
+
+  /// The text widget acting as the thumb when this switch is off.
+  ///
+  /// Defaults to [const Text("OFF")].
+  final Text? inactiveText;
 
   @override
   State<CustomSwitch> createState() => _CustomSwitchState();
@@ -24,6 +80,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
   late AnimationController controller;
   late Tween<double> tween;
   late CurvedAnimation animation;
+  late ColorScheme colorScheme;
 
   @override
   void initState() {
@@ -35,11 +92,12 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    colorScheme = Theme.of(context).colorScheme;
     return LayoutBuilder(builder: (context, constraint) {
       var width = constraint.maxWidth;
       return Container(
         width: width,
-        decoration: BoxDecoration(color: widget.trackColor, borderRadius: BorderRadius.circular(25)),
+        decoration: BoxDecoration(color: _getTrackColor, borderRadius: BorderRadius.circular(25)),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           AnimatedBuilder(
             builder: (context, child) {
@@ -55,6 +113,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               focusElevation: 0,
               highlightElevation: 0,
               disabledElevation: 0,
+              splashColor: null,
               onPressed: () {
                 widget.onChanged!(false);
                 controller.reset();
@@ -62,11 +121,11 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
                   controller.stop();
                 });
               },
-              color: !widget.value ? Colors.cyan : Colors.transparent,
+              color: _inActiveColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
-              child: widget.activatedText,
+              child: widget.inactiveText,
             ),
           ),
           AnimatedBuilder(
@@ -84,6 +143,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               focusElevation: 0,
               highlightElevation: 0,
               disabledElevation: 0,
+              splashColor: null,
               onPressed: () {
                 widget.onChanged!(true);
                 controller.reset();
@@ -91,15 +151,54 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
                   controller.stop();
                 });
               },
-              color: widget.value ? Colors.cyan : Colors.transparent,
+              color: _activeColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
               minWidth: width / 2,
               height: 50,
-              child: widget.disabledText,
+              child: widget.activeText,
             ),
           ),
         ]),
       );
     });
+  }
+
+  Color? get _getTrackColor {
+    if (widget.value) {
+      if (widget.activeTrackColor != null) {
+        return widget.activeTrackColor!;
+      }
+      if (widget.activeColor != null) {
+        return _activeColor.withOpacity(0.5);
+      }
+      return colorScheme.primary;
+    } else {
+      if (widget.inactiveTrackColor != null) {
+        return widget.inactiveTrackColor!;
+      }
+      return colorScheme.surfaceVariant;
+    }
+  }
+
+  Color get _inActiveColor {
+    if (widget.inactiveThumbColor != null) {
+      return inActiveState(color: widget.inactiveThumbColor!);
+    }
+    return inActiveState(color: colorScheme.outline);
+  }
+
+  Color get _activeColor {
+    if (widget.activeColor != null) {
+      return activeState(color: widget.activeColor!);
+    }
+    return activeState(color: colorScheme.onPrimary);
+  }
+
+  Color inActiveState({required Color color}) {
+    return !widget.value ? color : Colors.transparent;
+  }
+
+  Color activeState({required Color color}) {
+    return widget.value ? color : Colors.transparent;
   }
 }
