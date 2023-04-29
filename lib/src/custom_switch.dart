@@ -13,23 +13,63 @@ class CustomSwitch extends StatefulWidget {
     this.inactiveThumbColor,
   }) : super(key: key);
 
-  final void Function(bool value) onChanged;
+
+  /// PLEASE EDIT THIS DOCUMENTATION. REMOVE UNNECESSARY LINES THAT ARE NOT RELEVANT TO THIS CURRENT PACKAGE.
+
+
+
+  /// Whether this switch is on or off.
+  ///
+  /// This property must not be null.
   final bool value;
+
+  /// Called when the user toggles the switch on or off.
+  ///
+  /// The switch passes the new value to the callback but does not actually
+  /// change state until the parent widget rebuilds the switch with the new
+  /// value.
+  ///
+  /// If null, the switch will be displayed as disabled.
+  ///
+  /// The callback provided to [onChanged] should update the state of the parent
+  /// [StatefulWidget] using the [State.setState] method, so that the parent
+  /// gets rebuilt; for example:
+  ///
+  /// ```dart
+  /// Switch(
+  ///   value: _giveVerse,
+  ///   onChanged: (bool newValue) {
+  ///     setState(() {
+  ///       _giveVerse = newValue;
+  ///     });
+  ///   },
+  /// )
+  /// ```
+  final ValueChanged<bool>? onChanged;
+
+  /// The color to use when this switch is on.
+  ///
+  /// Defaults to [ColorScheme.onPrimary].
+  final Color? activeColor;
+
+  /// The color to use on the track when this switch is on.
+  ///
+  /// Defaults to [ColorScheme.onPrimary] with the opacity set at 50%.
+  final Color? activeTrackColor;
+
+  /// The color to use on the thumb when this switch is off.
+  ///
+  /// Defaults to the colors described in the Material design specification.
+  final Color? inactiveThumbColor;
+
+  /// The color to use on the track when this switch is off.
+  ///
+  /// Defaults to the colors described in the Material design specification.
+  final Color? inactiveTrackColor;
 
   final Text? selectedText;
 
   final Text? defaultText;
-
-  /// The color to use when this switch is on.
-  ///
-  /// Defaults to [ColorScheme.secondary].
-  final Color? activeColor;
-
-  final Color? activeTrackColor;
-
-  final Color? inactiveTrackColor;
-
-  final Color? inactiveThumbColor;
 
   @override
   State<CustomSwitch> createState() => _CustomSwitchState();
@@ -74,7 +114,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               disabledElevation: 0,
               splashColor: null,
               onPressed: () {
-                widget.onChanged(false);
+                widget.onChanged!(false);
                 controller.reset();
                 controller.forward().whenComplete(() {
                   controller.stop();
@@ -104,7 +144,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               disabledElevation: 0,
               splashColor: null,
               onPressed: () {
-                widget.onChanged(true);
+                widget.onChanged!(true);
                 controller.reset();
                 controller.forward().whenComplete(() {
                   controller.stop();
@@ -140,7 +180,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
   }
 
   Color get _inActiveColor {
-    if (widget.activeColor != null) {
+    if (widget.inactiveThumbColor != null) {
       return inActiveState(color: widget.inactiveThumbColor!);
     }
     return inActiveState(color: colorScheme.outline);
