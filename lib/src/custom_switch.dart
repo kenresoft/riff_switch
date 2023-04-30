@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class CustomSwitch extends StatefulWidget {
@@ -95,6 +97,10 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
     colorScheme = Theme.of(context).colorScheme;
     return LayoutBuilder(builder: (context, constraint) {
       var width = constraint.maxWidth;
+      var minWidth = constraint.minWidth;
+
+      double position = width / 2;
+      log("minWidth: $minWidth");
       return Container(
         width: width,
         decoration: BoxDecoration(color: _getTrackColor, borderRadius: BorderRadius.circular(25)),
@@ -108,8 +114,16 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
             },
             animation: animation,
             child: Draggable(
-              feedback: _getChild(_inactiveColor, width, widget.inactiveText!),
-              childWhenDragging: const SizedBox(),
+              feedbackOffset: Offset(position, 0),
+              hitTestBehavior: HitTestBehavior.translucent,
+              feedback: _getChild(_inactiveColor, width, null),
+              childWhenDragging: SizedBox(width: width / 2),
+              onDragEnd: (details) {
+                if (details.offset.dx > width || details.offset.dx < 0) {
+                  position = width / 2;
+                }
+                log(details.offset.dx.toString());
+              },
               axis: Axis.horizontal,
               child: GestureDetector(
                 onTap: () => _onChanged(false),
@@ -127,8 +141,8 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
             },
             animation: animation,
             child: Draggable(
-              feedback: _getChild(_inactiveColor, width, widget.inactiveText!),
-              childWhenDragging: const SizedBox(),
+              feedback: _getChild(_activeColor, width, null),
+              childWhenDragging: SizedBox(width: width / 2),
               axis: Axis.horizontal,
               child: GestureDetector(
                 onTap: () => _onChanged(true),
@@ -141,7 +155,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
     });
   }
 
-  Container _getChild(Color color, double width, Text child) {
+  Container _getChild(Color color, double width, Text? child) {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -150,7 +164,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
       ),
       width: width / 2,
       height: 50,
-      child: child,
+      child: Material(color: Colors.transparent, child: child),
     );
   }
 
