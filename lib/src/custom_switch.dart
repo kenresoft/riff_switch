@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class CustomSwitch extends StatefulWidget {
@@ -31,11 +33,11 @@ class CustomSwitch extends StatefulWidget {
   /// gets rebuilt; for example:
   ///
   /// ```dart
-  /// Switch(
-  ///   value: _giveVerse,
+  /// RiffSwitch(
+  ///   value: _toggle,
   ///   onChanged: (bool newValue) {
   ///     setState(() {
-  ///       _giveVerse = newValue;
+  ///       _toggle = newValue;
   ///     });
   ///   },
   /// )
@@ -95,6 +97,10 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
     colorScheme = Theme.of(context).colorScheme;
     return LayoutBuilder(builder: (context, constraint) {
       var width = constraint.maxWidth;
+      var minWidth = constraint.minWidth;
+
+      double position = width / 2;
+      log("minWidth: $minWidth");
       return Container(
         width: width,
         decoration: BoxDecoration(color: _getTrackColor, borderRadius: BorderRadius.circular(25)),
@@ -107,25 +113,22 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               );
             },
             animation: animation,
-            child: MaterialButton(
-              elevation: 0,
-              hoverElevation: 0,
-              focusElevation: 0,
-              highlightElevation: 0,
-              disabledElevation: 0,
-              splashColor: null,
-              onPressed: () {
-                widget.onChanged!(false);
-                controller.reset();
-                controller.forward().whenComplete(() {
-                  controller.stop();
-                });
+            child: Draggable(
+              feedbackOffset: Offset(position, 0),
+              hitTestBehavior: HitTestBehavior.translucent,
+              feedback: _getChild(_inactiveColor, width, null),
+              childWhenDragging: SizedBox(width: width / 2),
+              onDragEnd: (details) {
+                if (details.offset.dx > width || details.offset.dx < 0) {
+                  position = width / 2;
+                }
+                log(details.offset.dx.toString());
               },
-              color: _inActiveColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-              minWidth: width / 2,
-              height: 50,
-              child: widget.inactiveText,
+              axis: Axis.horizontal,
+              child: GestureDetector(
+                onTap: () => _onChanged(false),
+                child: _getChild(_inactiveColor, width, widget.inactiveText!),
+              ),
             ),
           ),
           AnimatedBuilder(
@@ -137,29 +140,39 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               );
             },
             animation: animation,
-            child: MaterialButton(
-              elevation: 0,
-              hoverElevation: 0,
-              focusElevation: 0,
-              highlightElevation: 0,
-              disabledElevation: 0,
-              splashColor: null,
-              onPressed: () {
-                widget.onChanged!(true);
-                controller.reset();
-                controller.forward().whenComplete(() {
-                  controller.stop();
-                });
-              },
-              color: _activeColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-              minWidth: width / 2,
-              height: 50,
-              child: widget.activeText,
+            child: Draggable(
+              feedback: _getChild(_activeColor, width, null),
+              childWhenDragging: SizedBox(width: width / 2),
+              axis: Axis.horizontal,
+              child: GestureDetector(
+                onTap: () => _onChanged(true),
+                child: _getChild(_activeColor, width, widget.activeText!),
+              ),
             ),
           ),
         ]),
       );
+    });
+  }
+
+  Container _getChild(Color color, double width, Text? child) {
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      width: width / 2,
+      height: 50,
+      child: Material(color: Colors.transparent, child: child),
+    );
+  }
+
+  void _onChanged(bool value) {
+    widget.onChanged!(value);
+    controller.reset();
+    controller.forward().whenComplete(() {
+      controller.stop();
     });
   }
 
@@ -180,7 +193,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
     }
   }
 
-  Color get _inActiveColor {
+  Color get _inactiveColor {
     if (widget.inactiveThumbColor != null) {
       return inActiveState(color: widget.inactiveThumbColor!);
     }
