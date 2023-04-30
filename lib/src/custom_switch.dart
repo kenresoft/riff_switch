@@ -31,11 +31,11 @@ class CustomSwitch extends StatefulWidget {
   /// gets rebuilt; for example:
   ///
   /// ```dart
-  /// Switch(
-  ///   value: _giveVerse,
+  /// RiffSwitch(
+  ///   value: _toggle,
   ///   onChanged: (bool newValue) {
   ///     setState(() {
-  ///       _giveVerse = newValue;
+  ///       _toggle = newValue;
   ///     });
   ///   },
   /// )
@@ -107,25 +107,14 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               );
             },
             animation: animation,
-            child: MaterialButton(
-              elevation: 0,
-              hoverElevation: 0,
-              focusElevation: 0,
-              highlightElevation: 0,
-              disabledElevation: 0,
-              splashColor: null,
-              onPressed: () {
-                widget.onChanged!(false);
-                controller.reset();
-                controller.forward().whenComplete(() {
-                  controller.stop();
-                });
-              },
-              color: _inActiveColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-              minWidth: width / 2,
-              height: 50,
-              child: widget.inactiveText,
+            child: Draggable(
+              feedback: _getChild(_inactiveColor, width, widget.inactiveText!),
+              childWhenDragging: const SizedBox(),
+              axis: Axis.horizontal,
+              child: GestureDetector(
+                onTap: () => _onChanged(false),
+                child: _getChild(_inactiveColor, width, widget.inactiveText!),
+              ),
             ),
           ),
           AnimatedBuilder(
@@ -137,29 +126,39 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
               );
             },
             animation: animation,
-            child: MaterialButton(
-              elevation: 0,
-              hoverElevation: 0,
-              focusElevation: 0,
-              highlightElevation: 0,
-              disabledElevation: 0,
-              splashColor: null,
-              onPressed: () {
-                widget.onChanged!(true);
-                controller.reset();
-                controller.forward().whenComplete(() {
-                  controller.stop();
-                });
-              },
-              color: _activeColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-              minWidth: width / 2,
-              height: 50,
-              child: widget.activeText,
+            child: Draggable(
+              feedback: _getChild(_inactiveColor, width, widget.inactiveText!),
+              childWhenDragging: const SizedBox(),
+              axis: Axis.horizontal,
+              child: GestureDetector(
+                onTap: () => _onChanged(true),
+                child: _getChild(_activeColor, width, widget.activeText!),
+              ),
             ),
           ),
         ]),
       );
+    });
+  }
+
+  Container _getChild(Color color, double width, Text child) {
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      width: width / 2,
+      height: 50,
+      child: child,
+    );
+  }
+
+  void _onChanged(bool value) {
+    widget.onChanged!(value);
+    controller.reset();
+    controller.forward().whenComplete(() {
+      controller.stop();
     });
   }
 
@@ -180,7 +179,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
     }
   }
 
-  Color get _inActiveColor {
+  Color get _inactiveColor {
     if (widget.inactiveThumbColor != null) {
       return inActiveState(color: widget.inactiveThumbColor!);
     }
