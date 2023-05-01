@@ -1,3 +1,3 @@
 library riff_switch;
 
-export 'src/custom_switch.dart';
+export 'src/riff_switch/custom_switch.dart';
