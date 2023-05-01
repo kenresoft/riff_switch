@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
-class CustomSwitch extends StatefulWidget {
-  const CustomSwitch({
+class TextSwitch extends StatefulWidget {
+  const TextSwitch({
     Key? key,
     required this.value,
     required this.onChanged,
@@ -13,6 +13,7 @@ class CustomSwitch extends StatefulWidget {
     this.activeColor,
     this.inactiveTrackColor,
     this.inactiveThumbColor,
+    this.trackColor,
   }) : super(key: key);
 
   /// Whether this switch is on or off.
@@ -74,11 +75,15 @@ class CustomSwitch extends StatefulWidget {
   /// Defaults to [const Text("OFF")].
   final Text? inactiveText;
 
+  final MaterialStateProperty<Color?>? thumbColor;
+
+  final MaterialStateProperty<Color?>? trackColor;
+
   @override
-  State<CustomSwitch> createState() => _CustomSwitchState();
+  State<TextSwitch> createState() => _TextSwitchState();
 }
 
-class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderStateMixin {
+class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Tween<double> tween;
   late CurvedAnimation animation;
@@ -90,6 +95,50 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
     tween = Tween(begin: 0.9, end: 1.0);
     animation = CurvedAnimation(parent: tween.animate(controller), curve: Curves.easeOutBack);
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(TextSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      // During a drag we may have modified the curve, reset it if its possible
+      // to do without visual discontinuation.
+      if (widget.value == false || widget.value == true) {
+        /// TODO
+      }
+      //animateToValue();
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  ValueChanged<bool>? get onChanged => widget.onChanged;
+
+  bool? get value => widget.value;
+
+  MaterialStateProperty<Color?> get _widgetThumbColor {
+    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return widget.inactiveThumbColor;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return widget.activeColor;
+      }
+      return widget.inactiveThumbColor;
+    });
+  }
+
+  MaterialStateProperty<Color?> get _widgetTrackColor {
+    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
+        return widget.activeTrackColor;
+      }
+      return widget.inactiveTrackColor;
+    });
   }
 
   @override
@@ -108,7 +157,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
           AnimatedBuilder(
             builder: (context, child) {
               return FractionalTranslation(
-                translation: Offset(!widget.value ? 1 - animation.value : 0, 0),
+                translation: Offset(!value! ? 1 - animation.value : 0, 0),
                 child: child,
               );
             },
@@ -169,7 +218,7 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
   }
 
   void _onChanged(bool value) {
-    widget.onChanged!(value);
+    onChanged!(value);
     controller.reset();
     controller.forward().whenComplete(() {
       controller.stop();
@@ -177,19 +226,29 @@ class _CustomSwitchState extends State<CustomSwitch> with SingleTickerProviderSt
   }
 
   Color? get _getTrackColor {
-    if (widget.value) {
-      if (widget.activeTrackColor != null) {
-        return widget.activeTrackColor!;
-      }
-      if (widget.activeColor != null) {
-        return _activeColor.withOpacity(0.5);
-      }
-      return colorScheme.primary;
+    if (widget.trackColor != null) {
+      return widget.activeTrackColor;
+      /*return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+        if (states.contains(MaterialState.selected)) {
+          return widget.activeTrackColor;
+        }
+        return widget.inactiveTrackColor;
+      });*/
     } else {
-      if (widget.inactiveTrackColor != null) {
-        return widget.inactiveTrackColor!;
+      if (widget.value) {
+        if (widget.activeTrackColor != null) {
+          return widget.activeTrackColor!;
+        }
+        if (widget.activeColor != null) {
+          return _activeColor.withOpacity(0.5);
+        }
+        return colorScheme.primary;
+      } else {
+        if (widget.inactiveTrackColor != null) {
+          return widget.inactiveTrackColor!;
+        }
+        return colorScheme.surfaceVariant;
       }
-      return colorScheme.surfaceVariant;
     }
   }
 
