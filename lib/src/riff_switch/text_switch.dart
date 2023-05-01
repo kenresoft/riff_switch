@@ -14,6 +14,7 @@ class TextSwitch extends StatefulWidget {
     this.inactiveTrackColor,
     this.inactiveThumbColor,
     this.trackColor,
+    this.thumbColor,
   }) : super(key: key);
 
   /// Whether this switch is on or off.
