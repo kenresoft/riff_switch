@@ -152,7 +152,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
     tween = Tween(begin: 0.9, end: 1.0);
     animation = CurvedAnimation(parent: tween.animate(controller), curve: Curves.easeOutBack);
 
-    // Colors need to be resolved in selected and non selected states separately
+    /*// Colors need to be resolved in selected and non selected states separately
     // so that they can be lerped between.
     final Set<MaterialState> activeStates = states..add(MaterialState.selected);
     final Set<MaterialState> inactiveStates = states..remove(MaterialState.selected);
@@ -172,7 +172,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
     effectiveInactiveTrackColor = widget.trackColor?.resolve(inactiveStates) ??
         _widgetTrackColor.resolve(inactiveStates) ??
         widget.trackColor?.resolve(inactiveStates) ??
-        widget.trackColor!.resolve(inactiveStates)!;
+        widget.trackColor!.resolve(inactiveStates)!;*/
     super.initState();
   }
 
@@ -231,19 +231,93 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
     });
   }
 
-  late final Color? activeThumbColor;
-  late final Color? inactiveThumbColor;
-
-  late final Color effectiveActiveThumbColor;
-  late final Color effectiveInactiveThumbColor;
-  late final Color effectiveActiveTrackColor;
-  late final Color effectiveInactiveTrackColor;
-
   @override
   Widget build(BuildContext context) {
     colorScheme = Theme.of(context).colorScheme;
 
-    // [state definitions here to enable change after rebuilds.]
+    // [state definitions here to enable change after any form of rebuild.]
+
+    // Colors need to be resolved in selected and non selected states separately
+    // so that they can be lerped between. [Reference: Material Switch]
+    final Set<MaterialState> activeStates = states..add(MaterialState.selected);
+    final Set<MaterialState> inactiveStates = states..remove(MaterialState.selected);
+
+    final Color? activeThumbColor = widget.thumbColor?.resolve(activeStates) ?? _widgetThumbColor.resolve(activeStates) ?? widget.thumbColor?.resolve(activeStates);
+
+    final Color effectiveActiveThumbColor = activeThumbColor ?? widget.thumbColor!.resolve(activeStates)!;
+
+    final Color? inactiveThumbColor = widget.thumbColor?.resolve(inactiveStates) ?? _widgetThumbColor.resolve(inactiveStates) ?? widget.thumbColor?.resolve(inactiveStates);
+
+    final Color effectiveInactiveThumbColor = inactiveThumbColor ?? widget.thumbColor!.resolve(inactiveStates)!;
+
+    final Color effectiveActiveTrackColor = widget.trackColor?.resolve(activeStates) ??
+        _widgetTrackColor.resolve(activeStates) ??
+        widget.trackColor?.resolve(activeStates) ??
+        _widgetThumbColor.resolve(activeStates)?.withAlpha(0x80) ??
+        widget.trackColor!.resolve(activeStates)!;
+
+    final Color effectiveInactiveTrackColor = widget.trackColor?.resolve(inactiveStates) ??
+        _widgetTrackColor.resolve(inactiveStates) ??
+        widget.trackColor?.resolve(inactiveStates) ??
+        widget.trackColor!.resolve(inactiveStates)!;
+
+    // Thumb states colors method
+    Color activeState({required Color color}) {
+      return widget.value ? color : Colors.transparent;
+    }
+
+    Color inActiveState({required Color color}) {
+      return !widget.value ? color : Colors.transparent;
+    }
+
+    // Thumb colors
+    Color activeColor() {
+      if (widget.thumbColor != null) {
+        return activeState(color: effectiveActiveThumbColor);
+      } else {
+        if (widget.activeColor != null) {
+          return activeState(color: widget.activeColor!);
+        }
+        return activeState(color: colorScheme.onPrimary);
+      }
+    }
+
+    Color inactiveColor() {
+      if (widget.thumbColor != null) {
+        return inActiveState(color: effectiveInactiveThumbColor);
+      } else {
+        if (widget.inactiveThumbColor != null) {
+          return inActiveState(color: widget.inactiveThumbColor!);
+        }
+        return inActiveState(color: colorScheme.outline);
+      }
+    }
+
+    // Track colors
+    Color? getTrackColor() {
+      if (widget.trackColor != null) {
+        if (widget.value) {
+          return effectiveActiveTrackColor;
+        } else {
+          return effectiveInactiveTrackColor;
+        }
+      } else {
+        if (widget.value) {
+          if (widget.activeTrackColor != null) {
+            return widget.activeTrackColor!;
+          }
+          if (widget.activeColor != null) {
+            return activeColor().withOpacity(0.5);
+          }
+          return colorScheme.primary;
+        } else {
+          if (widget.inactiveTrackColor != null) {
+            return widget.inactiveTrackColor!;
+          }
+          return colorScheme.surfaceVariant;
+        }
+      }
+    }
 
     return LayoutBuilder(builder: (context, constraint) {
       var width = constraint.maxWidth;
@@ -253,7 +327,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
       //log("minWidth: $minWidth");
       return Container(
         width: width,
-        decoration: BoxDecoration(color: _getTrackColor, borderRadius: BorderRadius.circular(25)),
+        decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           AnimatedBuilder(
             builder: (context, child) {
@@ -266,7 +340,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
             child: Draggable(
               feedbackOffset: Offset(position, 0),
               hitTestBehavior: HitTestBehavior.translucent,
-              feedback: _getChild(_inactiveColor, width, null),
+              feedback: _getChild(inactiveColor(), width, null),
               childWhenDragging: SizedBox(width: width / 2),
               onDragEnd: (details) {
                 if (details.offset.dx > width || details.offset.dx < 0) {
@@ -277,7 +351,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
               axis: Axis.horizontal,
               child: GestureDetector(
                 onTap: () => _onChanged(false),
-                child: _getChild(_inactiveColor, width, widget.inactiveText!),
+                child: _getChild(inactiveColor(), width, widget.inactiveText!),
               ),
             ),
           ),
@@ -291,12 +365,12 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
             },
             animation: animation,
             child: Draggable(
-              feedback: _getChild(_activeColor, width, null),
+              feedback: _getChild(activeColor(), width, null),
               childWhenDragging: SizedBox(width: width / 2),
               axis: Axis.horizontal,
               child: GestureDetector(
                 onTap: () => _onChanged(true),
-                child: _getChild(_activeColor, width, widget.activeText!),
+                child: _getChild(activeColor(), width, widget.activeText!),
               ),
             ),
           ),
@@ -326,7 +400,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
     });
   }
 
-  Color? get _getTrackColor {
+/*Color? get _getTrackColor {
     if (widget.trackColor != null) {
       if (widget.value) {
         return effectiveActiveTrackColor;
@@ -349,9 +423,9 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
         return colorScheme.surfaceVariant;
       }
     }
-  }
+  }*/
 
-  Color get _inactiveColor {
+/*Color get _inactiveColor {
     if (widget.inactiveThumbColor != null) {
       return inActiveState(color: widget.inactiveThumbColor!);
     }
@@ -371,5 +445,5 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
 
   Color activeState({required Color color}) {
     return widget.value ? color : Colors.transparent;
-  }
+  }*/
 }
