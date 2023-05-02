@@ -146,33 +146,13 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
   late CurvedAnimation animation;
   late ColorScheme colorScheme;
 
+  late double width;
+
   @override
   void initState() {
     controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
     tween = Tween(begin: 0.9, end: 1.0);
     animation = CurvedAnimation(parent: tween.animate(controller), curve: Curves.easeOutBack);
-
-    /*// Colors need to be resolved in selected and non selected states separately
-    // so that they can be lerped between.
-    final Set<MaterialState> activeStates = states..add(MaterialState.selected);
-    final Set<MaterialState> inactiveStates = states..remove(MaterialState.selected);
-
-    activeThumbColor = widget.thumbColor?.resolve(activeStates) ?? _widgetThumbColor.resolve(activeStates) ?? widget.thumbColor?.resolve(activeStates);
-    effectiveActiveThumbColor = activeThumbColor ?? widget.thumbColor!.resolve(activeStates)!;
-
-    inactiveThumbColor = widget.thumbColor?.resolve(inactiveStates) ?? _widgetThumbColor.resolve(inactiveStates) ?? widget.thumbColor?.resolve(inactiveStates);
-    effectiveInactiveThumbColor = inactiveThumbColor ?? widget.thumbColor!.resolve(inactiveStates)!;
-
-    effectiveActiveTrackColor = widget.trackColor?.resolve(activeStates) ??
-        _widgetTrackColor.resolve(activeStates) ??
-        widget.trackColor?.resolve(activeStates) ??
-        _widgetThumbColor.resolve(activeStates)?.withAlpha(0x80) ??
-        widget.trackColor!.resolve(activeStates)!;
-
-    effectiveInactiveTrackColor = widget.trackColor?.resolve(inactiveStates) ??
-        _widgetTrackColor.resolve(inactiveStates) ??
-        widget.trackColor?.resolve(inactiveStates) ??
-        widget.trackColor!.resolve(inactiveStates)!;*/
     super.initState();
   }
 
@@ -203,6 +183,45 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
 
   @override
   bool? get value => widget.value;
+
+  void _handleDragStart(DragStartDetails details) {
+    if (isInteractive) {
+      reactionController.forward();
+    }
+  }
+
+  void _handleDragUpdate(DragUpdateDetails details) {
+    if (isInteractive) {
+      position
+        ..curve = Curves.linear
+        ..reverseCurve = null;
+      final double delta = details.primaryDelta! / width;
+      switch (Directionality.of(context)) {
+        case TextDirection.rtl:
+          positionController.value -= delta;
+          break;
+        case TextDirection.ltr:
+          positionController.value += delta;
+          break;
+      }
+    }
+  }
+
+  bool _needsPositionAnimation = false;
+
+  void _handleDragEnd(DragEndDetails details) {
+    if (position.value >= 0.5 != widget.value) {
+      widget.onChanged?.call(!widget.value);
+      // Wait with finishing the animation until widget.value has changed to
+      // !widget.value as part of the widget.onChanged call above.
+      setState(() {
+        _needsPositionAnimation = true;
+      });
+    } else {
+      animateToValue();
+    }
+    reactionController.reverse();
+  }
 
   void _handleChanged(bool? value) {
     assert(value != null);
@@ -320,7 +339,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
     }
 
     return LayoutBuilder(builder: (context, constraint) {
-      var width = constraint.maxWidth;
+      width = constraint.maxWidth;
       var minWidth = constraint.minWidth;
 
       double position = width / 2;
@@ -337,7 +356,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
               );
             },
             animation: animation,
-            child: Draggable(
+            /*child: Draggable(
               feedbackOffset: Offset(position, 0),
               hitTestBehavior: HitTestBehavior.translucent,
               feedback: _getChild(inactiveColor(), width, null),
@@ -348,12 +367,20 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
                 }
                 //log(details.offset.dx.toString());
               },
-              axis: Axis.horizontal,
+              axis: Axis.horizontal,*/
+            child: Semantics(
+              toggled: widget.value,
               child: GestureDetector(
                 onTap: () => _onChanged(false),
+                excludeFromSemantics: true,
+                onHorizontalDragStart: _handleDragStart,
+                onHorizontalDragUpdate: _handleDragUpdate,
+                onHorizontalDragEnd: _handleDragEnd,
+                //dragStartBehavior: widget.dragStartBehavior,
                 child: _getChild(inactiveColor(), width, widget.inactiveText!),
               ),
             ),
+            //),
           ),
           AnimatedBuilder(
             builder: (context, child) {
