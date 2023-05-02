@@ -1,9 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
-class TextSwitch extends StatefulWidget {
-  const TextSwitch({
+enum RiffSwitchType { text }
+
+class RiffSwitch extends StatelessWidget {
+  const RiffSwitch({
     Key? key,
     required this.value,
     required this.onChanged,
@@ -15,6 +15,7 @@ class TextSwitch extends StatefulWidget {
     this.inactiveThumbColor,
     this.trackColor,
     this.thumbColor,
+    required this.type,
   }) : super(key: key);
 
   /// Whether this switch is on or off.
@@ -80,11 +81,66 @@ class TextSwitch extends StatefulWidget {
 
   final MaterialStateProperty<Color?>? trackColor;
 
+  final RiffSwitchType type;
+
+  RiffSwitchType get _type => type;
+
   @override
-  State<TextSwitch> createState() => _TextSwitchState();
+  Widget build(BuildContext context) {
+    switch (_type) {
+      case RiffSwitchType.text:
+        return _buildTextSwitch();
+    }
+  }
+
+  Widget _buildTextSwitch() {
+    return _TextSwitch(
+      value: value,
+      onChanged: onChanged,
+      activeTrackColor: activeTrackColor,
+      activeText: activeText,
+      inactiveText: inactiveText,
+      activeColor: activeColor,
+      inactiveTrackColor: inactiveTrackColor,
+      inactiveThumbColor: inactiveThumbColor,
+      trackColor: trackColor,
+      thumbColor: thumbColor,
+    );
+  }
 }
 
-class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateMixin {
+/// TEXTSWITCH
+class _TextSwitch extends StatefulWidget {
+  const _TextSwitch({
+    Key? key,
+    required this.value,
+    required this.onChanged,
+    this.activeTrackColor,
+    this.activeText = const Text('ON'),
+    this.inactiveText = const Text('OFF'),
+    this.activeColor,
+    this.inactiveTrackColor,
+    this.inactiveThumbColor,
+    this.trackColor,
+    this.thumbColor,
+  }) : super(key: key);
+
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  final Color? activeColor;
+  final Color? activeTrackColor;
+  final Color? inactiveThumbColor;
+  final Color? inactiveTrackColor;
+  final Text? activeText;
+  final Text? inactiveText;
+  final MaterialStateProperty<Color?>? thumbColor;
+  final MaterialStateProperty<Color?>? trackColor;
+
+  @override
+  State<_TextSwitch> createState() => _TextSwitchState();
+}
+
+class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin, ToggleableStateMixin {
   late AnimationController controller;
   late Tween<double> tween;
   late CurvedAnimation animation;
@@ -95,11 +151,33 @@ class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateM
     controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
     tween = Tween(begin: 0.9, end: 1.0);
     animation = CurvedAnimation(parent: tween.animate(controller), curve: Curves.easeOutBack);
+
+    // Colors need to be resolved in selected and non selected states separately
+    // so that they can be lerped between.
+    final Set<MaterialState> activeStates = states..add(MaterialState.selected);
+    final Set<MaterialState> inactiveStates = states..remove(MaterialState.selected);
+
+    activeThumbColor = widget.thumbColor?.resolve(activeStates) ?? _widgetThumbColor.resolve(activeStates) ?? widget.thumbColor?.resolve(activeStates);
+    effectiveActiveThumbColor = activeThumbColor ?? widget.thumbColor!.resolve(activeStates)!;
+
+    inactiveThumbColor = widget.thumbColor?.resolve(inactiveStates) ?? _widgetThumbColor.resolve(inactiveStates) ?? widget.thumbColor?.resolve(inactiveStates);
+    effectiveInactiveThumbColor = inactiveThumbColor ?? widget.thumbColor!.resolve(inactiveStates)!;
+
+    effectiveActiveTrackColor = widget.trackColor?.resolve(activeStates) ??
+        _widgetTrackColor.resolve(activeStates) ??
+        widget.trackColor?.resolve(activeStates) ??
+        _widgetThumbColor.resolve(activeStates)?.withAlpha(0x80) ??
+        widget.trackColor!.resolve(activeStates)!;
+
+    effectiveInactiveTrackColor = widget.trackColor?.resolve(inactiveStates) ??
+        _widgetTrackColor.resolve(inactiveStates) ??
+        widget.trackColor?.resolve(inactiveStates) ??
+        widget.trackColor!.resolve(inactiveStates)!;
     super.initState();
   }
 
   @override
-  void didUpdateWidget(TextSwitch oldWidget) {
+  void didUpdateWidget(_TextSwitch oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
       // During a drag we may have modified the curve, reset it if its possible
@@ -117,9 +195,20 @@ class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateM
     super.dispose();
   }
 
-  ValueChanged<bool>? get onChanged => widget.onChanged;
+  @override
+  ValueChanged<bool?>? get onChanged => widget.onChanged != null ? _handleChanged : null;
 
+  @override
+  bool get tristate => false;
+
+  @override
   bool? get value => widget.value;
+
+  void _handleChanged(bool? value) {
+    assert(value != null);
+    assert(widget.onChanged != null);
+    widget.onChanged?.call(value!);
+  }
 
   MaterialStateProperty<Color?> get _widgetThumbColor {
     return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
@@ -142,15 +231,26 @@ class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateM
     });
   }
 
+  late final Color? activeThumbColor;
+  late final Color? inactiveThumbColor;
+
+  late final Color effectiveActiveThumbColor;
+  late final Color effectiveInactiveThumbColor;
+  late final Color effectiveActiveTrackColor;
+  late final Color effectiveInactiveTrackColor;
+
   @override
   Widget build(BuildContext context) {
     colorScheme = Theme.of(context).colorScheme;
+
+    // [state definitions here to enable change after rebuilds.]
+
     return LayoutBuilder(builder: (context, constraint) {
       var width = constraint.maxWidth;
       var minWidth = constraint.minWidth;
 
       double position = width / 2;
-      log("minWidth: $minWidth");
+      //log("minWidth: $minWidth");
       return Container(
         width: width,
         decoration: BoxDecoration(color: _getTrackColor, borderRadius: BorderRadius.circular(25)),
@@ -172,7 +272,7 @@ class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateM
                 if (details.offset.dx > width || details.offset.dx < 0) {
                   position = width / 2;
                 }
-                log(details.offset.dx.toString());
+                //log(details.offset.dx.toString());
               },
               axis: Axis.horizontal,
               child: GestureDetector(
@@ -228,13 +328,11 @@ class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateM
 
   Color? get _getTrackColor {
     if (widget.trackColor != null) {
-      return widget.activeTrackColor;
-      /*return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-        if (states.contains(MaterialState.selected)) {
-          return widget.activeTrackColor;
-        }
-        return widget.inactiveTrackColor;
-      });*/
+      if (widget.value) {
+        return effectiveActiveTrackColor;
+      } else {
+        return effectiveInactiveTrackColor;
+      }
     } else {
       if (widget.value) {
         if (widget.activeTrackColor != null) {
