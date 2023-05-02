@@ -3,9 +3,15 @@ import 'package:riff_switch/riff_switch.dart';
 
 void main() {
   testWidgets('Widget test for the riff_switch custom widget', (widgetTester) async {
-    await widgetTester.pumpWidget(TextSwitch(value: false, onChanged: (value) {}));
+    await widgetTester.pumpWidget(RiffSwitch(
+      value: false,
+      onChanged: (value) {},
+      type: RiffSwitchType.text,
+    ));
 
-    final Finder finder = find.byWidgetPredicate((widget) => widget is TextSwitch && widget.value == false);
+    final Finder finder = find.byWidgetPredicate(
+      (widget) => widget is RiffSwitch && widget.value == false,
+    );
 
     expect(finder, findsOneWidget);
   });
