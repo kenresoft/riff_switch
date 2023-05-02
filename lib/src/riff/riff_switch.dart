@@ -1,9 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
-class TextSwitch extends StatefulWidget {
-  const TextSwitch({
+enum RiffSwitchType { text }
+
+class RiffSwitch extends StatelessWidget {
+  const RiffSwitch({
     Key? key,
     required this.value,
     required this.onChanged,
@@ -15,6 +15,7 @@ class TextSwitch extends StatefulWidget {
     this.inactiveThumbColor,
     this.trackColor,
     this.thumbColor,
+    required this.type,
   }) : super(key: key);
 
   /// Whether this switch is on or off.
@@ -80,11 +81,67 @@ class TextSwitch extends StatefulWidget {
 
   final MaterialStateProperty<Color?>? trackColor;
 
+  final RiffSwitchType type;
+
+  RiffSwitchType get _type => type;
+
   @override
-  State<TextSwitch> createState() => _TextSwitchState();
+  Widget build(BuildContext context) {
+    switch (_type) {
+      case RiffSwitchType.text:
+        return _buildTextSwitch();
+    }
+  }
+
+  Widget _buildTextSwitch() {
+    return _TextSwitch(
+      value: value,
+      onChanged: onChanged,
+      activeTrackColor: activeTrackColor,
+      activeText: activeText,
+      inactiveText: inactiveText,
+      activeColor: activeColor,
+      inactiveTrackColor: inactiveTrackColor,
+      inactiveThumbColor: inactiveThumbColor,
+      trackColor: trackColor,
+      thumbColor: thumbColor,
+    );
+  }
 }
 
-class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateMixin {
+
+/// TEXTSWITCH
+class _TextSwitch extends StatefulWidget {
+  const _TextSwitch({
+    Key? key,
+    required this.value,
+    required this.onChanged,
+    this.activeTrackColor,
+    this.activeText = const Text('ON'),
+    this.inactiveText = const Text('OFF'),
+    this.activeColor,
+    this.inactiveTrackColor,
+    this.inactiveThumbColor,
+    this.trackColor,
+    this.thumbColor,
+  }) : super(key: key);
+
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  final Color? activeColor;
+  final Color? activeTrackColor;
+  final Color? inactiveThumbColor;
+  final Color? inactiveTrackColor;
+  final Text? activeText;
+  final Text? inactiveText;
+  final MaterialStateProperty<Color?>? thumbColor;
+  final MaterialStateProperty<Color?>? trackColor;
+
+  @override
+  State<_TextSwitch> createState() => _TextSwitchState();
+}
+
+class _TextSwitchState extends State<_TextSwitch> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Tween<double> tween;
   late CurvedAnimation animation;
@@ -99,7 +156,7 @@ class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateM
   }
 
   @override
-  void didUpdateWidget(TextSwitch oldWidget) {
+  void didUpdateWidget(_TextSwitch oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
       // During a drag we may have modified the curve, reset it if its possible
@@ -150,7 +207,7 @@ class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateM
       var minWidth = constraint.minWidth;
 
       double position = width / 2;
-      log("minWidth: $minWidth");
+      //log("minWidth: $minWidth");
       return Container(
         width: width,
         decoration: BoxDecoration(color: _getTrackColor, borderRadius: BorderRadius.circular(25)),
@@ -172,7 +229,7 @@ class _TextSwitchState extends State<TextSwitch> with SingleTickerProviderStateM
                 if (details.offset.dx > width || details.offset.dx < 0) {
                   position = width / 2;
                 }
-                log(details.offset.dx.toString());
+                //log(details.offset.dx.toString());
               },
               axis: Axis.horizontal,
               child: GestureDetector(
