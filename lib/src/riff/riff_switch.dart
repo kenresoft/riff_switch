@@ -180,9 +180,8 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
       // During a drag we may have modified the curve, reset it if its possible
       // to do without visual discontinuation.
       if (widget.value == false || widget.value == true) {
-        /// TODO
+        _onChanged(widget.value);
       }
-      //animateToValue();
     }
   }
 
