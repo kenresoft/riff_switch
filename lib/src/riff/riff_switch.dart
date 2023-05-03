@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 enum RiffSwitchType { text }
@@ -79,8 +77,24 @@ class RiffSwitch extends StatelessWidget {
   /// Defaults to [const Text("OFF")].
   final Text? inactiveText;
 
+  /// The color of this [Switch]'s thumb.
+  ///
+  /// Resolved in the following states:
+  ///  * [MaterialState.selected].
+  ///  * [MaterialState.hovered].
+  ///  * [MaterialState.focused].
+  ///  * [MaterialState.disabled].
+  ///
   final MaterialStateProperty<Color?>? thumbColor;
 
+  /// The color of this [Switch]'s track.
+  ///
+  /// Resolved in the following states:
+  ///  * [MaterialState.selected].
+  ///  * [MaterialState.hovered].
+  ///  * [MaterialState.focused].
+  ///  * [MaterialState.disabled].
+  ///
   final MaterialStateProperty<Color?>? trackColor;
 
   final RiffSwitchType type;
@@ -186,47 +200,6 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
 
   @override
   bool? get value => widget.value;
-
-  void _handleDragStart(DragStartDetails details) {
-    if (isInteractive) {
-      reactionController.forward();
-    }
-  }
-
-  void _handleDragUpdate(DragUpdateDetails details) {
-    if (isInteractive) {
-      /*position
-        ..curve = Curves.linear
-        ..reverseCurve = null;*/
-      final double delta = details.primaryDelta!;
-      log(delta.toString());
-
-      /*switch (Directionality.of(context)) {
-        case TextDirection.rtl:
-          positionController.value -= delta;
-          break;
-        case TextDirection.ltr:
-          positionController.value += delta;
-          break;
-      }*/
-    }
-  }
-
-  bool _needsPositionAnimation = false;
-
-  void _handleDragEnd(DragEndDetails details) {
-    if (position.value >= 0.5 != widget.value) {
-      widget.onChanged?.call(!widget.value);
-      // Wait with finishing the animation until widget.value has changed to
-      // !widget.value as part of the widget.onChanged call above.
-      setState(() {
-        _needsPositionAnimation = true;
-      });
-    } else {
-      animateToValue();
-    }
-    reactionController.reverse();
-  }
 
   void _handleChanged(bool? value) {
     assert(value != null);
@@ -364,9 +337,6 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
                 child: GestureDetector(
                   excludeFromSemantics: true,
                   onTap: () => _onChanged(false),
-                  onHorizontalDragStart: (_) => horizontalPosition = 0,
-                  onHorizontalDragUpdate: (dragUpdateDetails) => _onHorizontalDragUpdate(dragUpdateDetails),
-                  onHorizontalDragEnd: (_) => _onHorizontalDragEnd(),
                   child: _getChild(inactiveColor(), width, widget.inactiveText!),
                 ),
               ),
@@ -375,7 +345,6 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
             AnimatedBuilder(
               builder: (context, child) {
                 return FractionalTranslation(
-                  //opacity: !widget.value ? animation.value : 1,
                   translation: Offset(widget.value ? animation.value - 1 : 0, 0),
                   child: child,
                 );
@@ -386,9 +355,6 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
                 child: GestureDetector(
                   excludeFromSemantics: true,
                   onTap: () => _onChanged(true),
-                  onHorizontalDragStart: (_) => horizontalPosition = 0,
-                  onHorizontalDragUpdate: (dragUpdateDetails) => _onHorizontalDragUpdate(dragUpdateDetails),
-                  onHorizontalDragEnd: (_) => _onHorizontalDragEnd(),
                   child: _getChild(activeColor(), width, widget.activeText!),
                 ),
               ),
@@ -397,51 +363,6 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
         );
       }),
     );
-  }
-
-  void _onHorizontalDragUpdate(DragUpdateDetails dragUpdateDetails) {
-    setState(() {
-      horizontalPosition = _horizontalPosition(dragUpdateDetails);
-    });
-    log("horizontalPosition: $horizontalPosition");
-  }
-
-  void _onHorizontalDragEnd() {
-    if (widget.value) {
-      if (horizontalPosition == -1) {
-        horizontalPosition = 0;
-      }
-      widget.onChanged?.call(false);
-    }
-
-    if (!widget.value) {
-      if (horizontalPosition == 1) {
-        horizontalPosition = 0;
-      }
-      widget.onChanged?.call(true);
-    }
-  }
-
-  double _horizontalPosition(DragUpdateDetails dragUpdateDetails) {
-    if (widget.value) {
-      double delta = (dragUpdateDetails.localPosition.dx - 1 / width) - 1;
-      if (delta > 0) {
-        return 0;
-      }
-      if (delta < -1) {
-        return -1;
-      }
-      return delta;
-    } else {
-      double delta = (dragUpdateDetails.localPosition.dx / width);
-      if (delta < 0) {
-        return 0;
-      }
-      if (delta > 1) {
-        return 1;
-      }
-      return delta;
-    }
   }
 
   Widget _getChild(Color color, double width, Text? child) {
@@ -457,23 +378,6 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
     );
   }
 
-  /*
-  * feedbackOffset: Offset(position, 0),
-      hitTestBehavior: HitTestBehavior.translucent,
-      feedback: Container(color: Colors.green, width: width),
-      childWhenDragging: SizedBox(width: width / 2) /*Container(color: Colors.yellow, width: width/2, height: 50,)*/,
-      onDragUpdate: (details) {
-        position = details.delta.dx;
-        log(position.toString());
-      },
-      onDragEnd: (details) {
-        if (details.offset.dx > width || details.offset.dx < 0) {
-          //position = width / 2;
-        }
-      },
-      axis: Axis.horizontal,
-  * */
-
   void _onChanged(bool value) {
     onChanged!(value);
     controller.reset();
@@ -481,51 +385,4 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
       controller.stop();
     });
   }
-
-/*Color? get _getTrackColor {
-    if (widget.trackColor != null) {
-      if (widget.value) {
-        return effectiveActiveTrackColor;
-      } else {
-        return effectiveInactiveTrackColor;
-      }
-    } else {
-      if (widget.value) {
-        if (widget.activeTrackColor != null) {
-          return widget.activeTrackColor!;
-        }
-        if (widget.activeColor != null) {
-          return _activeColor.withOpacity(0.5);
-        }
-        return colorScheme.primary;
-      } else {
-        if (widget.inactiveTrackColor != null) {
-          return widget.inactiveTrackColor!;
-        }
-        return colorScheme.surfaceVariant;
-      }
-    }
-  }*/
-
-/*Color get _inactiveColor {
-    if (widget.inactiveThumbColor != null) {
-      return inActiveState(color: widget.inactiveThumbColor!);
-    }
-    return inActiveState(color: colorScheme.outline);
-  }
-
-  Color get _activeColor {
-    if (widget.activeColor != null) {
-      return activeState(color: widget.activeColor!);
-    }
-    return activeState(color: colorScheme.onPrimary);
-  }
-
-  Color inActiveState({required Color color}) {
-    return !widget.value ? color : Colors.transparent;
-  }
-
-  Color activeState({required Color color}) {
-    return widget.value ? color : Colors.transparent;
-  }*/
 }
