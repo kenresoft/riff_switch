@@ -77,8 +77,24 @@ class RiffSwitch extends StatelessWidget {
   /// Defaults to [const Text("OFF")].
   final Text? inactiveText;
 
+  /// The color of this [Switch]'s thumb.
+  ///
+  /// Resolved in the following states:
+  ///  * [MaterialState.selected].
+  ///  * [MaterialState.hovered].
+  ///  * [MaterialState.focused].
+  ///  * [MaterialState.disabled].
+  ///
   final MaterialStateProperty<Color?>? thumbColor;
 
+  /// The color of this [Switch]'s track.
+  ///
+  /// Resolved in the following states:
+  ///  * [MaterialState.selected].
+  ///  * [MaterialState.hovered].
+  ///  * [MaterialState.focused].
+  ///  * [MaterialState.disabled].
+  ///
   final MaterialStateProperty<Color?>? trackColor;
 
   final RiffSwitchType type;
