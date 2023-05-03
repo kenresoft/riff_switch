@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 enum RiffSwitchType { text }
@@ -147,6 +149,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
   late ColorScheme colorScheme;
 
   late double width;
+  double horizontalPosition = 0.0;
 
   @override
   void initState() {
@@ -192,18 +195,20 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
 
   void _handleDragUpdate(DragUpdateDetails details) {
     if (isInteractive) {
-      position
+      /*position
         ..curve = Curves.linear
-        ..reverseCurve = null;
-      final double delta = details.primaryDelta! / width;
-      switch (Directionality.of(context)) {
+        ..reverseCurve = null;*/
+      final double delta = details.primaryDelta!;
+      log(delta.toString());
+
+      /*switch (Directionality.of(context)) {
         case TextDirection.rtl:
           positionController.value -= delta;
           break;
         case TextDirection.ltr:
           positionController.value += delta;
           break;
-      }
+      }*/
     }
   }
 
@@ -338,75 +343,108 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
       }
     }
 
-    return LayoutBuilder(builder: (context, constraint) {
-      width = constraint.maxWidth;
-      var minWidth = constraint.minWidth;
-
-      double position = width / 2;
-      //log("minWidth: $minWidth");
-      return Container(
-        width: width,
-        decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          AnimatedBuilder(
-            builder: (context, child) {
-              return FractionalTranslation(
-                translation: Offset(!value! ? 1 - animation.value : 0, 0),
-                child: child,
-              );
-            },
-            animation: animation,
-            /*child: Draggable(
-              feedbackOffset: Offset(position, 0),
-              hitTestBehavior: HitTestBehavior.translucent,
-              feedback: _getChild(inactiveColor(), width, null),
-              childWhenDragging: SizedBox(width: width / 2),
-              onDragEnd: (details) {
-                if (details.offset.dx > width || details.offset.dx < 0) {
-                  position = width / 2;
-                }
-                //log(details.offset.dx.toString());
+    return Semantics(
+      toggled: widget.value,
+      child: LayoutBuilder(builder: (context, constraint) {
+        width = constraint.maxWidth;
+        return Container(
+          width: 100,
+          decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            AnimatedBuilder(
+              builder: (context, child) {
+                return FractionalTranslation(
+                  translation: Offset(!value! ? 1 - animation.value : 0, 0),
+                  child: child,
+                );
               },
-              axis: Axis.horizontal,*/
-            child: Semantics(
-              toggled: widget.value,
-              child: GestureDetector(
-                onTap: () => _onChanged(false),
-                excludeFromSemantics: true,
-                onHorizontalDragStart: _handleDragStart,
-                onHorizontalDragUpdate: _handleDragUpdate,
-                onHorizontalDragEnd: _handleDragEnd,
-                //dragStartBehavior: widget.dragStartBehavior,
-                child: _getChild(inactiveColor(), width, widget.inactiveText!),
+              animation: animation,
+              child: FractionalTranslation(
+                translation: Offset(horizontalPosition, 0),
+                child: GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () => _onChanged(false),
+                  onHorizontalDragStart: (_) => horizontalPosition = 0,
+                  onHorizontalDragUpdate: (dragUpdateDetails) => _onHorizontalDragUpdate(dragUpdateDetails),
+                  onHorizontalDragEnd: (_) => _onHorizontalDragEnd(),
+                  child: _getChild(inactiveColor(), width, widget.inactiveText!),
+                ),
               ),
+              //),
             ),
-            //),
-          ),
-          AnimatedBuilder(
-            builder: (context, child) {
-              return FractionalTranslation(
-                //opacity: !widget.value ? animation.value : 1,
-                translation: Offset(widget.value ? animation.value - 1 : 0, 0),
-                child: child,
-              );
-            },
-            animation: animation,
-            child: Draggable(
-              feedback: _getChild(activeColor(), width, null),
-              childWhenDragging: SizedBox(width: width / 2),
-              axis: Axis.horizontal,
-              child: GestureDetector(
-                onTap: () => _onChanged(true),
-                child: _getChild(activeColor(), width, widget.activeText!),
+            AnimatedBuilder(
+              builder: (context, child) {
+                return FractionalTranslation(
+                  //opacity: !widget.value ? animation.value : 1,
+                  translation: Offset(widget.value ? animation.value - 1 : 0, 0),
+                  child: child,
+                );
+              },
+              animation: animation,
+              child: FractionalTranslation(
+                translation: Offset(horizontalPosition, 0),
+                child: GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () => _onChanged(true),
+                  onHorizontalDragStart: (_) => horizontalPosition = 0,
+                  onHorizontalDragUpdate: (dragUpdateDetails) => _onHorizontalDragUpdate(dragUpdateDetails),
+                  onHorizontalDragEnd: (_) => _onHorizontalDragEnd(),
+                  child: _getChild(activeColor(), width, widget.activeText!),
+                ),
               ),
-            ),
-          ),
-        ]),
-      );
-    });
+            )
+          ]),
+        );
+      }),
+    );
   }
 
-  Container _getChild(Color color, double width, Text? child) {
+  void _onHorizontalDragUpdate(DragUpdateDetails dragUpdateDetails) {
+    setState(() {
+      horizontalPosition = _horizontalPosition(dragUpdateDetails);
+    });
+    log("horizontalPosition: $horizontalPosition");
+  }
+
+  void _onHorizontalDragEnd() {
+    if (widget.value) {
+      if (horizontalPosition == -1) {
+        horizontalPosition = 0;
+      }
+      widget.onChanged?.call(false);
+    }
+
+    if (!widget.value) {
+      if (horizontalPosition == 1) {
+        horizontalPosition = 0;
+      }
+      widget.onChanged?.call(true);
+    }
+  }
+
+  double _horizontalPosition(DragUpdateDetails dragUpdateDetails) {
+    if (widget.value) {
+      double delta = (dragUpdateDetails.localPosition.dx - 1 / width) - 1;
+      if (delta > 0) {
+        return 0;
+      }
+      if (delta < -1) {
+        return -1;
+      }
+      return delta;
+    } else {
+      double delta = (dragUpdateDetails.localPosition.dx / width);
+      if (delta < 0) {
+        return 0;
+      }
+      if (delta > 1) {
+        return 1;
+      }
+      return delta;
+    }
+  }
+
+  Widget _getChild(Color color, double width, Text? child) {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -418,6 +456,23 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
       child: Material(color: Colors.transparent, child: child),
     );
   }
+
+  /*
+  * feedbackOffset: Offset(position, 0),
+      hitTestBehavior: HitTestBehavior.translucent,
+      feedback: Container(color: Colors.green, width: width),
+      childWhenDragging: SizedBox(width: width / 2) /*Container(color: Colors.yellow, width: width/2, height: 50,)*/,
+      onDragUpdate: (details) {
+        position = details.delta.dx;
+        log(position.toString());
+      },
+      onDragEnd: (details) {
+        if (details.offset.dx > width || details.offset.dx < 0) {
+          //position = width / 2;
+        }
+      },
+      axis: Axis.horizontal,
+  * */
 
   void _onChanged(bool value) {
     onChanged!(value);
