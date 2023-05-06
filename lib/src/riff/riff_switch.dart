@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-enum RiffSwitchType { text, icon, image, color }
+enum RiffSwitchType { simple, decorative }
+
+enum Type { text, icon, image, color }
 
 class RiffSwitch extends StatelessWidget {
   const RiffSwitch({
@@ -16,6 +18,8 @@ class RiffSwitch extends StatelessWidget {
     this.trackColor,
     this.thumbColor,
     required this.type,
+    this.activeChild,
+    this.inactiveChild,
   }) : super(key: key);
 
   /// Whether this switch is on or off.
@@ -77,6 +81,16 @@ class RiffSwitch extends StatelessWidget {
   /// Defaults to [const Text("OFF")].
   final Text? inactiveText;
 
+  /// The custom widget acting as the thumb when this switch is on.
+  ///
+  /// Defaults to [const Text("Active")].
+  final Widget? activeChild;
+
+  /// The custom widget acting as the thumb when this switch is off.
+  ///
+  /// Defaults to [const Text("Inactive")].
+  final Widget? inactiveChild;
+
   /// The color of this [Switch]'s thumb.
   ///
   /// Resolved in the following states:
@@ -104,15 +118,17 @@ class RiffSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (_type) {
-      case RiffSwitchType.text:
-        return _buildTextSwitch();
+      case RiffSwitchType.simple:
+        return _buildSimpleSwitch();
+      case RiffSwitchType.decorative:
+        return _buildDecorativeSwitch();
       default:
-        return _buildTextSwitch();
+        return _buildSimpleSwitch();
     }
   }
 
-  Widget _buildTextSwitch() {
-    return _TextSwitch(
+  Widget _buildSimpleSwitch() {
+    return _SimpleSwitch(
       value: value,
       onChanged: onChanged,
       activeTrackColor: activeTrackColor,
@@ -125,11 +141,26 @@ class RiffSwitch extends StatelessWidget {
       thumbColor: thumbColor,
     );
   }
+
+  Widget _buildDecorativeSwitch() {
+    return _DecorativeSwitch(
+      value: value,
+      onChanged: onChanged,
+      activeTrackColor: activeTrackColor,
+      activeChild: activeText,
+      inactiveChild: inactiveText,
+      activeColor: activeColor,
+      inactiveTrackColor: inactiveTrackColor,
+      inactiveThumbColor: inactiveThumbColor,
+      trackColor: trackColor,
+      thumbColor: thumbColor,
+    );
+  }
 }
 
-/// TEXTSWITCH
-class _TextSwitch extends StatefulWidget {
-  const _TextSwitch({
+/// Simple Switch
+class _SimpleSwitch extends StatefulWidget {
+  const _SimpleSwitch({
     Key? key,
     required this.value,
     required this.onChanged,
@@ -155,10 +186,10 @@ class _TextSwitch extends StatefulWidget {
   final MaterialStateProperty<Color?>? trackColor;
 
   @override
-  State<_TextSwitch> createState() => _TextSwitchState();
+  State<_SimpleSwitch> createState() => _SimpleSwitchState();
 }
 
-class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin, ToggleableStateMixin {
+class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMixin, ToggleableStateMixin {
   late AnimationController _controller;
   late Tween<double> _tween;
   late CurvedAnimation _animation;
@@ -175,7 +206,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
   }
 
   @override
-  void didUpdateWidget(_TextSwitch oldWidget) {
+  void didUpdateWidget(_SimpleSwitch oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
       // During a drag we may have modified the curve, reset it if its possible
@@ -366,6 +397,266 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
   }
 
   Widget _getChild(Color color, double width, Text? child) {
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      width: width / 2,
+      height: 50,
+      child: Material(color: Colors.transparent, child: child),
+    );
+  }
+
+  void _onChanged(bool value) {
+    onChanged!(value);
+    _controller.reset();
+    _controller.forward().whenComplete(() {
+      _controller.stop();
+    });
+  }
+}
+
+/// Decorative Switch
+class _DecorativeSwitch extends StatefulWidget {
+  const _DecorativeSwitch({
+    Key? key,
+    required this.value,
+    required this.onChanged,
+    this.activeTrackColor,
+    this.activeChild = const Text('ON'),
+    this.inactiveChild = const Text('OFF'),
+    this.activeColor,
+    this.inactiveTrackColor,
+    this.inactiveThumbColor,
+    this.trackColor,
+    this.thumbColor,
+  }) : super(key: key);
+
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  final Color? activeColor;
+  final Color? activeTrackColor;
+  final Color? inactiveThumbColor;
+  final Color? inactiveTrackColor;
+  final Widget? activeChild;
+  final Widget? inactiveChild;
+  final MaterialStateProperty<Color?>? thumbColor;
+  final MaterialStateProperty<Color?>? trackColor;
+
+  @override
+  State<_DecorativeSwitch> createState() => _DecorativeSwitchState();
+}
+
+class _DecorativeSwitchState extends State<_DecorativeSwitch> with TickerProviderStateMixin, ToggleableStateMixin {
+  late AnimationController _controller;
+  late Tween<double> _tween;
+  late CurvedAnimation _animation;
+  late ColorScheme _colorScheme;
+  late double _width;
+  final double _horizontalPosition = 0.0;
+
+  @override
+  void initState() {
+    _controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
+    _tween = Tween(begin: 0.9, end: 1.0);
+    _animation = CurvedAnimation(parent: _tween.animate(_controller), curve: Curves.easeOutBack);
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(_DecorativeSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      // During a drag we may have modified the curve, reset it if its possible
+      // to do without visual discontinuation.
+      if (widget.value == false || widget.value == true) {
+        _onChanged(widget.value);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  ValueChanged<bool?>? get onChanged => widget.onChanged != null ? _handleChanged : null;
+
+  @override
+  bool get tristate => false;
+
+  @override
+  bool? get value => widget.value;
+
+  void _handleChanged(bool? value) {
+    assert(value != null);
+    assert(widget.onChanged != null);
+    widget.onChanged?.call(value!);
+  }
+
+  MaterialStateProperty<Color?> get _widgetThumbColor {
+    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.disabled)) {
+        return widget.inactiveThumbColor;
+      }
+      if (states.contains(MaterialState.selected)) {
+        return widget.activeColor;
+      }
+      return widget.inactiveThumbColor;
+    });
+  }
+
+  MaterialStateProperty<Color?> get _widgetTrackColor {
+    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
+        return widget.activeTrackColor;
+      }
+      return widget.inactiveTrackColor;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _colorScheme = Theme.of(context).colorScheme;
+
+    // [state definitions here to enable change after any form of rebuild.]
+
+    // Colors need to be resolved in selected and non selected states separately
+    // so that they can be lerped between. [Reference: Material Switch]
+    final Set<MaterialState> activeStates = states..add(MaterialState.selected);
+    final Set<MaterialState> inactiveStates = states..remove(MaterialState.selected);
+
+    final Color? activeThumbColor = widget.thumbColor?.resolve(activeStates) ?? _widgetThumbColor.resolve(activeStates) ?? widget.thumbColor?.resolve(activeStates);
+
+    final Color effectiveActiveThumbColor = activeThumbColor ?? widget.thumbColor!.resolve(activeStates)!;
+
+    final Color? inactiveThumbColor = widget.thumbColor?.resolve(inactiveStates) ?? _widgetThumbColor.resolve(inactiveStates) ?? widget.thumbColor?.resolve(inactiveStates);
+
+    final Color effectiveInactiveThumbColor = inactiveThumbColor ?? widget.thumbColor!.resolve(inactiveStates)!;
+
+    final Color effectiveActiveTrackColor = widget.trackColor?.resolve(activeStates) ??
+        _widgetTrackColor.resolve(activeStates) ??
+        widget.trackColor?.resolve(activeStates) ??
+        _widgetThumbColor.resolve(activeStates)?.withAlpha(0x80) ??
+        widget.trackColor!.resolve(activeStates)!;
+
+    final Color effectiveInactiveTrackColor = widget.trackColor?.resolve(inactiveStates) ??
+        _widgetTrackColor.resolve(inactiveStates) ??
+        widget.trackColor?.resolve(inactiveStates) ??
+        widget.trackColor!.resolve(inactiveStates)!;
+
+    // Thumb states colors method
+    Color activeState({required Color color}) {
+      return widget.value ? color : Colors.transparent;
+    }
+
+    Color inActiveState({required Color color}) {
+      return !widget.value ? color : Colors.transparent;
+    }
+
+    // Thumb colors
+    Color activeColor() {
+      if (widget.thumbColor != null) {
+        return activeState(color: effectiveActiveThumbColor);
+      } else {
+        if (widget.activeColor != null) {
+          return activeState(color: widget.activeColor!);
+        }
+        return activeState(color: _colorScheme.onPrimary);
+      }
+    }
+
+    Color inactiveColor() {
+      if (widget.thumbColor != null) {
+        return inActiveState(color: effectiveInactiveThumbColor);
+      } else {
+        if (widget.inactiveThumbColor != null) {
+          return inActiveState(color: widget.inactiveThumbColor!);
+        }
+        return inActiveState(color: _colorScheme.outline);
+      }
+    }
+
+    // Track colors
+    Color? getTrackColor() {
+      if (widget.trackColor != null) {
+        if (widget.value) {
+          return effectiveActiveTrackColor;
+        } else {
+          return effectiveInactiveTrackColor;
+        }
+      } else {
+        if (widget.value) {
+          if (widget.activeTrackColor != null) {
+            return widget.activeTrackColor!;
+          }
+          if (widget.activeColor != null) {
+            return activeColor().withOpacity(0.5);
+          }
+          return _colorScheme.primary;
+        } else {
+          if (widget.inactiveTrackColor != null) {
+            return widget.inactiveTrackColor!;
+          }
+          return _colorScheme.surfaceVariant;
+        }
+      }
+    }
+
+    return Semantics(
+      toggled: widget.value,
+      child: LayoutBuilder(builder: (context, constraint) {
+        _width = constraint.maxWidth;
+        return Container(
+          width: _width,
+          decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            AnimatedBuilder(
+              builder: (context, child) {
+                return FractionalTranslation(
+                  translation: Offset(!value! ? 1 - _animation.value : 0, 0),
+                  child: child,
+                );
+              },
+              animation: _animation,
+              child: FractionalTranslation(
+                translation: Offset(_horizontalPosition, 0),
+                child: GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () => _onChanged(false),
+                  child: _getChild(inactiveColor(), _width, widget.inactiveChild!),
+                ),
+              ),
+              //),
+            ),
+            AnimatedBuilder(
+              builder: (context, child) {
+                return FractionalTranslation(
+                  translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
+                  child: child,
+                );
+              },
+              animation: _animation,
+              child: FractionalTranslation(
+                translation: Offset(_horizontalPosition, 0),
+                child: GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () => _onChanged(true),
+                  child: _getChild(activeColor(), _width, widget.activeChild!),
+                ),
+              ),
+            )
+          ]),
+        );
+      }),
+    );
+  }
+
+  Widget _getChild(Color color, double width, Widget? child) {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
