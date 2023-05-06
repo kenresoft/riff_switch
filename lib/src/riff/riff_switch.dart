@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum RiffSwitchType { text }
+enum RiffSwitchType { text, icon, image, color }
 
 class RiffSwitch extends StatelessWidget {
   const RiffSwitch({
@@ -106,6 +106,8 @@ class RiffSwitch extends StatelessWidget {
     switch (_type) {
       case RiffSwitchType.text:
         return _buildTextSwitch();
+      default:
+        return _buildTextSwitch();
     }
   }
 
@@ -157,19 +159,18 @@ class _TextSwitch extends StatefulWidget {
 }
 
 class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin, ToggleableStateMixin {
-  late AnimationController controller;
-  late Tween<double> tween;
-  late CurvedAnimation animation;
-  late ColorScheme colorScheme;
-
-  late double width;
-  double horizontalPosition = 0.0;
+  late AnimationController _controller;
+  late Tween<double> _tween;
+  late CurvedAnimation _animation;
+  late ColorScheme _colorScheme;
+  late double _width;
+  final double _horizontalPosition = 0.0;
 
   @override
   void initState() {
-    controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
-    tween = Tween(begin: 0.9, end: 1.0);
-    animation = CurvedAnimation(parent: tween.animate(controller), curve: Curves.easeOutBack);
+    _controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
+    _tween = Tween(begin: 0.9, end: 1.0);
+    _animation = CurvedAnimation(parent: _tween.animate(_controller), curve: Curves.easeOutBack);
     super.initState();
   }
 
@@ -187,7 +188,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
 
   @override
   void dispose() {
-    controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -229,7 +230,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
 
   @override
   Widget build(BuildContext context) {
-    colorScheme = Theme.of(context).colorScheme;
+    _colorScheme = Theme.of(context).colorScheme;
 
     // [state definitions here to enable change after any form of rebuild.]
 
@@ -274,7 +275,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
         if (widget.activeColor != null) {
           return activeState(color: widget.activeColor!);
         }
-        return activeState(color: colorScheme.onPrimary);
+        return activeState(color: _colorScheme.onPrimary);
       }
     }
 
@@ -285,7 +286,7 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
         if (widget.inactiveThumbColor != null) {
           return inActiveState(color: widget.inactiveThumbColor!);
         }
-        return inActiveState(color: colorScheme.outline);
+        return inActiveState(color: _colorScheme.outline);
       }
     }
 
@@ -305,12 +306,12 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
           if (widget.activeColor != null) {
             return activeColor().withOpacity(0.5);
           }
-          return colorScheme.primary;
+          return _colorScheme.primary;
         } else {
           if (widget.inactiveTrackColor != null) {
             return widget.inactiveTrackColor!;
           }
-          return colorScheme.surfaceVariant;
+          return _colorScheme.surfaceVariant;
         }
       }
     }
@@ -318,25 +319,25 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
     return Semantics(
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
-        width = constraint.maxWidth;
+        _width = constraint.maxWidth;
         return Container(
-          width: 100,
+          width: _width,
           decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             AnimatedBuilder(
               builder: (context, child) {
                 return FractionalTranslation(
-                  translation: Offset(!value! ? 1 - animation.value : 0, 0),
+                  translation: Offset(!value! ? 1 - _animation.value : 0, 0),
                   child: child,
                 );
               },
-              animation: animation,
+              animation: _animation,
               child: FractionalTranslation(
-                translation: Offset(horizontalPosition, 0),
+                translation: Offset(_horizontalPosition, 0),
                 child: GestureDetector(
                   excludeFromSemantics: true,
                   onTap: () => _onChanged(false),
-                  child: _getChild(inactiveColor(), width, widget.inactiveText!),
+                  child: _getChild(inactiveColor(), _width, widget.inactiveText!),
                 ),
               ),
               //),
@@ -344,17 +345,17 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
             AnimatedBuilder(
               builder: (context, child) {
                 return FractionalTranslation(
-                  translation: Offset(widget.value ? animation.value - 1 : 0, 0),
+                  translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
                   child: child,
                 );
               },
-              animation: animation,
+              animation: _animation,
               child: FractionalTranslation(
-                translation: Offset(horizontalPosition, 0),
+                translation: Offset(_horizontalPosition, 0),
                 child: GestureDetector(
                   excludeFromSemantics: true,
                   onTap: () => _onChanged(true),
-                  child: _getChild(activeColor(), width, widget.activeText!),
+                  child: _getChild(activeColor(), _width, widget.activeText!),
                 ),
               ),
             )
@@ -379,9 +380,9 @@ class _TextSwitchState extends State<_TextSwitch> with TickerProviderStateMixin,
 
   void _onChanged(bool value) {
     onChanged!(value);
-    controller.reset();
-    controller.forward().whenComplete(() {
-      controller.stop();
+    _controller.reset();
+    _controller.forward().whenComplete(() {
+      _controller.stop();
     });
   }
 }
