@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:riff_switch/riff_switch.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +25,7 @@ class RiffSwitchExample extends StatefulWidget {
   const RiffSwitchExample({Key? key, title})
       : _title = title,
         super(key: key);
+
   final String _title;
 
   @override
@@ -30,13 +33,51 @@ class RiffSwitchExample extends StatefulWidget {
 }
 
 class _RiffSwitchExampleState extends State<RiffSwitchExample> {
+  late bool _switchValue = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget._title)),
       body: Column(
         children: [
-          RichText(text: text)
+          RiffSwitch(
+            value: _switchValue,
+            onChanged: (value) => setState(() {
+              _switchValue = value;
+            }),
+            type: RiffSwitchType.simple,
+          ),
+          const SizedBox(height: 30),
+          RiffSwitch(
+            value: _switchValue,
+            onChanged: (value) => setState(() {
+              _switchValue = value;
+            }),
+            type: RiffSwitchType.simple,
+            activeText: const Text("Decline"),
+            inactiveText: const Text("Accept"),
+          ),
+          const SizedBox(height: 30),
+          RiffSwitch(
+            value: _switchValue,
+            onChanged: (value) => setState(() {
+              _switchValue = value;
+            }),
+            type: RiffSwitchType.decorative,
+          ),
+          const SizedBox(height: 30),
+          RiffSwitch(
+            value: _switchValue,
+            onChanged: (value) => setState(() {
+              _switchValue = value;
+            }),
+            type: RiffSwitchType.decorative,
+            activeChild: const Card(
+              color: CupertinoColors.systemBlue,
+            ),
+            inactiveChild: const Card(color: CupertinoColors.systemYellow),
+          )
         ],
       ),
     );
