@@ -16,10 +16,10 @@ dependencies:
   cupertino_icons: ^1.0.5
 
   riff_switch:
-    git:
-      url: 'git@github.com:kenresoft/riff_switch.git'
-      ref: 'release'
-
+#    git:
+#      url: 'git@github.com:kenresoft/riff_switch.git'
+#      ref: 'release'
+    path: '../'
 
 dev_dependencies:
   flutter_test:
