@@ -126,11 +126,9 @@ packages:
   riff_switch:
     dependency: "direct main"
     description:
-      path: "."
-      ref: release
-      resolved-ref: "09174b331c64b21471fdcfeed333b2a4f3ba0fd3"
-      url: "git@github.com:kenresoft/riff_switch.git"
-    source: git
+      path: ".."
+      relative: true
+    source: path
     version: "0.0.1"
   sky_engine:
     dependency: transitive

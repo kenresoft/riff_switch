@@ -95,20 +95,46 @@ class RiffSwitch extends StatelessWidget {
   ///
   /// Resolved in the following states:
   ///  * [MaterialState.selected].
-  ///  * [MaterialState.hovered].
-  ///  * [MaterialState.focused].
+  //  * [MaterialState.hovered].
+  //  * [MaterialState.focused].
   ///  * [MaterialState.disabled].
   ///
+  /// *sample implementation*
+  /// ```
+  /// MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+  ///   if (states.contains(MaterialState.disabled)) {
+  ///    return Colors.blue;
+  ///   }
+  ///   if (states.contains(MaterialState.selected)) {
+  ///     return Colors.orange;
+  ///   }
+  ///   return Colors.pinkAccent;
+  /// });
+  /// ```
+
   final MaterialStateProperty<Color?>? thumbColor;
 
   /// The color of this [Switch]'s track.
   ///
   /// Resolved in the following states:
   ///  * [MaterialState.selected].
-  ///  * [MaterialState.hovered].
-  ///  * [MaterialState.focused].
+  //  * [MaterialState.hovered].
+  //  * [MaterialState.focused].
   ///  * [MaterialState.disabled].
   ///
+  /// *sample implementation*
+  /// ```
+  /// MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+  ///   if (states.contains(MaterialState.disabled)) {
+  ///    return Colors.grey;
+  ///   }
+  ///   if (states.contains(MaterialState.selected)) {
+  ///     return Colors.white70;
+  ///   }
+  ///   return Colors.green;
+  /// });
+  /// ```
+
   final MaterialStateProperty<Color?>? trackColor;
 
   final RiffSwitchType type;
@@ -233,9 +259,10 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     if (oldWidget.value != widget.value) {
       // During a drag we may have modified the curve, reset it if its possible
       // to do without visual discontinuation.
-      if (widget.value == false || widget.value == true) {
+
+      /*if (widget.value == false || widget.value == true) {
         _onChanged(widget.value);
-      }
+      }*/
     }
   }
 
