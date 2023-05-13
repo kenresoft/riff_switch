@@ -143,14 +143,21 @@ class RiffSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (_type) {
+    // Dart 2
+    /*switch (_type) {
       case RiffSwitchType.simple:
         return _buildSimpleSwitch();
       case RiffSwitchType.decorative:
         return _buildDecorativeSwitch();
       default:
         return _buildSimpleSwitch();
-    }
+    }*/
+
+    // Using Dart 3 Pattern
+    return switch (this) {
+      RiffSwitch(_type: RiffSwitchType.simple) => _buildSimpleSwitch(),
+      RiffSwitch(_type: RiffSwitchType.decorative) => _buildDecorativeSwitch(),
+    };
   }
 
   Widget _buildSimpleSwitch() {
