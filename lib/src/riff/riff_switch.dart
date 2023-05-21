@@ -9,6 +9,7 @@ class RiffSwitch extends StatelessWidget {
     Key? key,
     required this.value,
     required this.onChanged,
+    this.height = 30,
     this.activeTrackColor,
     this.activeText = const Text('ON'),
     this.inactiveText = const Text('OFF'),
@@ -50,6 +51,9 @@ class RiffSwitch extends StatelessWidget {
   /// )
   /// ```
   final ValueChanged<bool>? onChanged;
+
+  /// The height of this switch
+  final double? height;
 
   /// The color to use when this switch is on.
   ///
@@ -164,6 +168,7 @@ class RiffSwitch extends StatelessWidget {
     return _SimpleSwitch(
       value: value,
       onChanged: onChanged,
+      height: height,
       activeTrackColor: activeTrackColor,
       activeText: activeText,
       inactiveText: inactiveText,
@@ -179,6 +184,7 @@ class RiffSwitch extends StatelessWidget {
     return _SimpleSwitch.decorative(
       value: value,
       onChanged: onChanged,
+      height: height,
       activeTrackColor: activeTrackColor,
       activeChild: activeChild,
       inactiveChild: inactiveChild,
@@ -197,6 +203,7 @@ class _SimpleSwitch extends StatefulWidget {
     Key? key,
     required this.value,
     required this.onChanged,
+    this.height,
     this.trackColor,
     this.thumbColor,
     this.activeColor,
@@ -214,6 +221,7 @@ class _SimpleSwitch extends StatefulWidget {
     Key? key,
     required this.value,
     required this.onChanged,
+    this.height,
     this.trackColor,
     this.thumbColor,
     this.activeColor,
@@ -229,6 +237,7 @@ class _SimpleSwitch extends StatefulWidget {
 
   final bool value;
   final ValueChanged<bool>? onChanged;
+  final double? height;
   final Color? activeColor;
   final Color? activeTrackColor;
   final Color? inactiveThumbColor;
@@ -424,7 +433,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                 child: GestureDetector(
                   excludeFromSemantics: true,
                   onTap: () => _onChanged(false),
-                  child: _getChild(inactiveColor(), _width, _inactiveChild),
+                  child: _getChild(inactiveColor(), _width, widget.height!, _inactiveChild),
                 ),
               ),
               //),
@@ -442,7 +451,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                 child: GestureDetector(
                   excludeFromSemantics: true,
                   onTap: () => _onChanged(true),
-                  child: _getChild(activeColor(), _width, _activeChild),
+                  child: _getChild(activeColor(), _width, widget.height!, _activeChild),
                 ),
               ),
             )
@@ -460,7 +469,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     return widget.type == RiffSwitchType.simple ? widget.inactiveText! : widget.inactiveChild!;
   }
 
-  Widget _getChild(Color color, double width, Widget? child) {
+  Widget _getChild(Color color, double width, double height, Widget? child) {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -468,7 +477,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
         borderRadius: BorderRadius.circular(25),
       ),
       width: width / 2,
-      height: 50,
+      height: height,
       child: Material(color: Colors.transparent, child: child),
     );
   }
