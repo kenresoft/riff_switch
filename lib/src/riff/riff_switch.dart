@@ -9,6 +9,7 @@ class RiffSwitch extends StatelessWidget {
     Key? key,
     required this.value,
     required this.onChanged,
+    this.height = 30,
     this.activeTrackColor,
     this.activeText = const Text('ON'),
     this.inactiveText = const Text('OFF'),
@@ -50,6 +51,9 @@ class RiffSwitch extends StatelessWidget {
   /// )
   /// ```
   final ValueChanged<bool>? onChanged;
+
+  /// The height of this switch
+  final double? height;
 
   /// The color to use when this switch is on.
   ///
@@ -95,20 +99,46 @@ class RiffSwitch extends StatelessWidget {
   ///
   /// Resolved in the following states:
   ///  * [MaterialState.selected].
-  ///  * [MaterialState.hovered].
-  ///  * [MaterialState.focused].
+  //  * [MaterialState.hovered].
+  //  * [MaterialState.focused].
   ///  * [MaterialState.disabled].
   ///
+  /// *sample implementation*
+  /// ```
+  /// MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+  ///   if (states.contains(MaterialState.disabled)) {
+  ///    return Colors.blue;
+  ///   }
+  ///   if (states.contains(MaterialState.selected)) {
+  ///     return Colors.orange;
+  ///   }
+  ///   return Colors.pinkAccent;
+  /// });
+  /// ```
+
   final MaterialStateProperty<Color?>? thumbColor;
 
   /// The color of this [Switch]'s track.
   ///
   /// Resolved in the following states:
   ///  * [MaterialState.selected].
-  ///  * [MaterialState.hovered].
-  ///  * [MaterialState.focused].
+  //  * [MaterialState.hovered].
+  //  * [MaterialState.focused].
   ///  * [MaterialState.disabled].
   ///
+  /// *sample implementation*
+  /// ```
+  /// MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+  ///   if (states.contains(MaterialState.disabled)) {
+  ///    return Colors.grey;
+  ///   }
+  ///   if (states.contains(MaterialState.selected)) {
+  ///     return Colors.white70;
+  ///   }
+  ///   return Colors.green;
+  /// });
+  /// ```
+
   final MaterialStateProperty<Color?>? trackColor;
 
   final RiffSwitchType type;
@@ -117,20 +147,28 @@ class RiffSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (_type) {
+    // Dart 2
+    /*switch (_type) {
       case RiffSwitchType.simple:
         return _buildSimpleSwitch();
       case RiffSwitchType.decorative:
         return _buildDecorativeSwitch();
       default:
         return _buildSimpleSwitch();
-    }
+    }*/
+
+    // Using Dart 3 Pattern
+    return switch (this) {
+      RiffSwitch(_type: RiffSwitchType.simple) => _buildSimpleSwitch(),
+      RiffSwitch(_type: RiffSwitchType.decorative) => _buildDecorativeSwitch(),
+    };
   }
 
   Widget _buildSimpleSwitch() {
     return _SimpleSwitch(
       value: value,
       onChanged: onChanged,
+      height: height,
       activeTrackColor: activeTrackColor,
       activeText: activeText,
       inactiveText: inactiveText,
@@ -146,6 +184,7 @@ class RiffSwitch extends StatelessWidget {
     return _SimpleSwitch.decorative(
       value: value,
       onChanged: onChanged,
+      height: height,
       activeTrackColor: activeTrackColor,
       activeChild: activeChild,
       inactiveChild: inactiveChild,
@@ -164,6 +203,7 @@ class _SimpleSwitch extends StatefulWidget {
     Key? key,
     required this.value,
     required this.onChanged,
+    this.height,
     this.trackColor,
     this.thumbColor,
     this.activeColor,
@@ -181,6 +221,7 @@ class _SimpleSwitch extends StatefulWidget {
     Key? key,
     required this.value,
     required this.onChanged,
+    this.height,
     this.trackColor,
     this.thumbColor,
     this.activeColor,
@@ -196,6 +237,7 @@ class _SimpleSwitch extends StatefulWidget {
 
   final bool value;
   final ValueChanged<bool>? onChanged;
+  final double? height;
   final Color? activeColor;
   final Color? activeTrackColor;
   final Color? inactiveThumbColor;
@@ -233,9 +275,10 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     if (oldWidget.value != widget.value) {
       // During a drag we may have modified the curve, reset it if its possible
       // to do without visual discontinuation.
-      if (widget.value == false || widget.value == true) {
+
+      /*if (widget.value == false || widget.value == true) {
         _onChanged(widget.value);
-      }
+      }*/
     }
   }
 
@@ -390,7 +433,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                 child: GestureDetector(
                   excludeFromSemantics: true,
                   onTap: () => _onChanged(false),
-                  child: _getChild(inactiveColor(), _width, _inactiveChild),
+                  child: _getChild(inactiveColor(), _width, widget.height!, _inactiveChild),
                 ),
               ),
               //),
@@ -408,7 +451,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                 child: GestureDetector(
                   excludeFromSemantics: true,
                   onTap: () => _onChanged(true),
-                  child: _getChild(activeColor(), _width, _activeChild),
+                  child: _getChild(activeColor(), _width, widget.height!, _activeChild),
                 ),
               ),
             )
@@ -426,7 +469,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     return widget.type == RiffSwitchType.simple ? widget.inactiveText! : widget.inactiveChild!;
   }
 
-  Widget _getChild(Color color, double width, Widget? child) {
+  Widget _getChild(Color color, double width, double height, Widget? child) {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -434,7 +477,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
         borderRadius: BorderRadius.circular(25),
       ),
       width: width / 2,
-      height: 50,
+      height: height,
       child: Material(color: Colors.transparent, child: child),
     );
   }
