@@ -1,12 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:riff_switch/riff_switch.dart';
 
 void main() {
-  test('adds one to input values', () {
-    final calculator = Calculator();
-    expect(calculator.addOne(2), 3);
-    expect(calculator.addOne(-7), -6);
-    expect(calculator.addOne(0), 1);
+  testWidgets('Widget test for the riff_switch custom widget', (widgetTester) async {
+    await widgetTester.pumpWidget(RiffSwitch(
+      value: false,
+      onChanged: (value) {},
+      type: RiffSwitchType.text,
+    ));
+
+    final Finder finder = find.byWidgetPredicate(
+      (widget) => widget is RiffSwitch && widget.value == false,
+    );
+
+    expect(finder, findsOneWidget);
   });
 }
