@@ -6,7 +6,7 @@ void main() {
     await widgetTester.pumpWidget(RiffSwitch(
       value: false,
       onChanged: (value) {},
-      type: RiffSwitchType.text,
+      type: RiffSwitchType.simple,
     ));
 
     final Finder finder = find.byWidgetPredicate(

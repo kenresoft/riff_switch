@@ -143,6 +143,7 @@ class RiffSwitch extends StatelessWidget {
 
   final RiffSwitchType type;
 
+// Getter method to access the private variable type
   RiffSwitchType get _type => type;
 
   @override
@@ -158,8 +159,11 @@ class RiffSwitch extends StatelessWidget {
     }*/
 
     // Using Dart 3 Pattern
+    // A switch statement that returns a widget based on the type of RiffSwitch
     return switch (this) {
+    // If the type is simple, build a simple switch widget
       RiffSwitch(_type: RiffSwitchType.simple) => _buildSimpleSwitch(),
+    // If the type is decorative, build a decorative switch widget
       RiffSwitch(_type: RiffSwitchType.decorative) => _buildDecorativeSwitch(),
     };
   }
@@ -212,7 +216,8 @@ class _SimpleSwitch extends StatefulWidget {
     this.inactiveThumbColor,
     this.activeText = const Text('ON'),
     this.inactiveText = const Text('OFF'),
-  })  : activeChild = null,
+  })
+      : activeChild = null,
         inactiveChild = null,
         type = RiffSwitchType.simple,
         super(key: key);
@@ -230,7 +235,8 @@ class _SimpleSwitch extends StatefulWidget {
     this.inactiveThumbColor,
     this.activeChild,
     this.inactiveChild,
-  })  : activeText = null,
+  })
+      : activeText = null,
         inactiveText = null,
         type = RiffSwitchType.decorative,
         super(key: key);
@@ -494,7 +500,9 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
 /// Decorative Switch
 
 class _SwitchDefaultsM3 extends SwitchThemeData {
-  _SwitchDefaultsM3(BuildContext context) : _colors = Theme.of(context).colorScheme;
+  _SwitchDefaultsM3(BuildContext context) : _colors = Theme
+      .of(context)
+      .colorScheme;
 
   final ColorScheme _colors;
 
