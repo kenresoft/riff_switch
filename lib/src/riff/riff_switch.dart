@@ -6,7 +6,7 @@ enum Type { text, icon, image, color }
 
 class RiffSwitch extends StatelessWidget {
   const RiffSwitch({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     this.height = 30,
@@ -21,7 +21,7 @@ class RiffSwitch extends StatelessWidget {
     this.trackColor,
     this.thumbColor,
     required this.type,
-  }) : super(key: key);
+  });
 
   /// Whether this switch is on or off.
   ///
@@ -143,6 +143,7 @@ class RiffSwitch extends StatelessWidget {
 
   final RiffSwitchType type;
 
+// Getter method to access the private variable type
   RiffSwitchType get _type => type;
 
   @override
@@ -158,8 +159,11 @@ class RiffSwitch extends StatelessWidget {
     }*/
 
     // Using Dart 3 Pattern
+    // A switch statement that returns a widget based on the type of RiffSwitch
     return switch (this) {
+      // If the type is simple, build a simple switch widget
       RiffSwitch(_type: RiffSwitchType.simple) => _buildSimpleSwitch(),
+      // If the type is decorative, build a decorative switch widget
       RiffSwitch(_type: RiffSwitchType.decorative) => _buildDecorativeSwitch(),
     };
   }
@@ -200,7 +204,7 @@ class RiffSwitch extends StatelessWidget {
 /// Simple Switch
 class _SimpleSwitch extends StatefulWidget {
   const _SimpleSwitch({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     this.height,
@@ -214,11 +218,10 @@ class _SimpleSwitch extends StatefulWidget {
     this.inactiveText = const Text('OFF'),
   })  : activeChild = null,
         inactiveChild = null,
-        type = RiffSwitchType.simple,
-        super(key: key);
+        type = RiffSwitchType.simple;
 
   const _SimpleSwitch.decorative({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     this.height,
@@ -232,8 +235,7 @@ class _SimpleSwitch extends StatefulWidget {
     this.inactiveChild,
   })  : activeText = null,
         inactiveText = null,
-        type = RiffSwitchType.decorative,
-        super(key: key);
+        type = RiffSwitchType.decorative;
 
   final bool value;
   final ValueChanged<bool>? onChanged;
@@ -349,10 +351,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
         _widgetThumbColor.resolve(activeStates)?.withAlpha(0x80) ??
         defaults.trackColor!.resolve(activeStates)!;
 
-    final Color effectiveInactiveTrackColor = widget.trackColor?.resolve(inactiveStates) ??
-        _widgetTrackColor.resolve(inactiveStates) ??
-        switchTheme.trackColor?.resolve(inactiveStates) ??
-        defaults.trackColor!.resolve(inactiveStates)!;
+    final Color effectiveInactiveTrackColor =
+        widget.trackColor?.resolve(inactiveStates) ?? _widgetTrackColor.resolve(inactiveStates) ?? switchTheme.trackColor?.resolve(inactiveStates) ?? defaults.trackColor!.resolve(inactiveStates)!;
 
     // Thumb states colors method
     Color activeState({required Color color}) {
