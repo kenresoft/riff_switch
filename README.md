@@ -26,6 +26,15 @@ dependencies:
 ## Usage
 
 
+## Screenshot
+
+<div>
+  <video height="550" width="50%" controls muted autoplay>
+    <source src="screenshots/Screen_recording_1.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <p>Screen Record 1</p>
+</div>
 
 ## Additional information
 
