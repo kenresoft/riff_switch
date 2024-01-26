@@ -23,9 +23,7 @@ class MyApp extends StatelessWidget {
 }
 
 class RiffSwitchExample extends StatefulWidget {
-  const RiffSwitchExample({Key? key, title})
-      : _title = title,
-        super(key: key);
+  const RiffSwitchExample({super.key, title}) : _title = title;
 
   final String _title;
 
