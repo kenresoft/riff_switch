@@ -265,16 +265,19 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
 
   @override
   void initState() {
-    _controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
+    super.initState();
+    _controller = AnimationController(duration: const Duration(milliseconds: 8000), vsync: this);
     _tween = Tween(begin: 0.9, end: 1.0);
     _animation = CurvedAnimation(parent: _tween.animate(_controller), curve: Curves.easeOutBack);
-    super.initState();
+    _controller.forward(from: 1.0);
   }
 
   @override
   void didUpdateWidget(_SimpleSwitch oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
+      //_controller.forward(from: 1.0);
+
       // During a drag we may have modified the curve, reset it if its possible
       // to do without visual discontinuation.
 
@@ -422,6 +425,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             AnimatedBuilder(
               builder: (context, child) {
+                debugPrint((1 - _animation.value).toString());
                 return FractionalTranslation(
                   translation: Offset(!value! ? 1 - _animation.value : 0, 0),
                   child: child,
