@@ -25,16 +25,83 @@ dependencies:
 
 ## Usage
 
+```dart
+// 1
+  RiffSwitch(
+    value: _switchValue,
+    onChanged: (value) => setState(() {
+      _switchValue = value;
+    }),
+    type: RiffSwitchType.simple,
+  ),
+
+  const SizedBox(height: 30),
+
+  // 2
+  RiffSwitch(
+    value: _switchValue,
+    onChanged: (value) => setState(() {
+      _switchValue = value;
+    }),
+    type: RiffSwitchType.simple,
+    activeText: const Text("Accept"),
+    inactiveText: const Text("Decline"),
+    thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
+        return Colors.greenAccent;
+      }
+      return Colors.pinkAccent;
+    }),
+    trackColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
+        return Colors.grey;
+      }
+      return Colors.grey;
+    }),
+  ),
+
+  const SizedBox(height: 30),
+
+  // 3
+  RiffSwitch(
+    value: _switchValue,
+    onChanged: (value) => setState(() {
+      _switchValue = value;
+    }),
+    type: RiffSwitchType.decorative,
+    activeColor: Colors.orange,
+  ),
+
+  const SizedBox(height: 30),
+
+  // 4
+  RiffSwitch(
+    value: _switchValue,
+    onChanged: (value) => setState(() {
+      _switchValue = value;
+    }),
+    type: RiffSwitchType.decorative,
+    activeChild: const Card(
+      color: CupertinoColors.systemBlue,
+      child: FlutterLogo(),
+    ),
+    inactiveChild: const Card(
+      color: CupertinoColors.systemYellow,
+      child: FlutterLogo(),
+    ),
+  )
+```
+
 
 ## Screenshot
 
-<div>
+<img alt="Screenshot 1" height="550" src="screenshots\Screenshot_1.png" title="Screenshot 1" width="200"/>
+
   <video height="550" width="50%" controls muted autoplay>
     <source src="screenshots/Screen_recording_1.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
   <p>Screen Record 1</p>
-</div>
 
 ## Additional information
 
