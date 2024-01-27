@@ -97,7 +97,9 @@ dependencies:
 
 <img alt="Screenshot 1" height="500" src="screenshots\Screenshot_1.png" title="Screenshot 1" width="200"/>
 
-<img alt="Screenshot 1" height="500" src="screenshots\Screen_recording_1.gif" title="Screenshot 1" width="200"/>
+<img alt="Screenshot 2" height="500" src="screenshots\Screenshot_2.png" title="Screenshot 2" width="200"/>
+
+<img alt="Screen Record" height="500" src="screenshots\Screen_recording_1.gif" title="Screen Record" width="200"/>
 
 
 ## Additional information
