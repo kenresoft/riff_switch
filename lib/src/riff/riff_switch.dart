@@ -6,7 +6,7 @@ enum Type { text, icon, image, color }
 
 class RiffSwitch extends StatelessWidget {
   const RiffSwitch({
-    super.key,
+    Key? key,
     required this.value,
     required this.onChanged,
     this.height = 30,
@@ -21,7 +21,7 @@ class RiffSwitch extends StatelessWidget {
     this.trackColor,
     this.thumbColor,
     required this.type,
-  });
+  }) : super(key: key);
 
   /// Whether this switch is on or off.
   ///
@@ -143,7 +143,6 @@ class RiffSwitch extends StatelessWidget {
 
   final RiffSwitchType type;
 
-// Getter method to access the private variable type
   RiffSwitchType get _type => type;
 
   @override
@@ -159,11 +158,8 @@ class RiffSwitch extends StatelessWidget {
     }*/
 
     // Using Dart 3 Pattern
-    // A switch statement that returns a widget based on the type of RiffSwitch
     return switch (this) {
-      // If the type is simple, build a simple switch widget
       RiffSwitch(_type: RiffSwitchType.simple) => _buildSimpleSwitch(),
-      // If the type is decorative, build a decorative switch widget
       RiffSwitch(_type: RiffSwitchType.decorative) => _buildDecorativeSwitch(),
     };
   }
@@ -204,7 +200,7 @@ class RiffSwitch extends StatelessWidget {
 /// Simple Switch
 class _SimpleSwitch extends StatefulWidget {
   const _SimpleSwitch({
-    super.key,
+    Key? key,
     required this.value,
     required this.onChanged,
     this.height,
@@ -218,10 +214,11 @@ class _SimpleSwitch extends StatefulWidget {
     this.inactiveText = const Text('OFF'),
   })  : activeChild = null,
         inactiveChild = null,
-        type = RiffSwitchType.simple;
+        type = RiffSwitchType.simple,
+        super(key: key);
 
   const _SimpleSwitch.decorative({
-    super.key,
+    Key? key,
     required this.value,
     required this.onChanged,
     this.height,
@@ -235,7 +232,8 @@ class _SimpleSwitch extends StatefulWidget {
     this.inactiveChild,
   })  : activeText = null,
         inactiveText = null,
-        type = RiffSwitchType.decorative;
+        type = RiffSwitchType.decorative,
+        super(key: key);
 
   final bool value;
   final ValueChanged<bool>? onChanged;
@@ -261,23 +259,20 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   late Tween<double> _tween;
   late CurvedAnimation _animation;
   late double _width;
-  final double _horizontalPosition = 0.0;
+  double _horizontalPosition = 0.0;
 
   @override
   void initState() {
-    super.initState();
-    _controller = AnimationController(duration: const Duration(milliseconds: 8000), vsync: this);
+    _controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
     _tween = Tween(begin: 0.9, end: 1.0);
     _animation = CurvedAnimation(parent: _tween.animate(_controller), curve: Curves.easeOutBack);
-    _controller.forward(from: 1.0);
+    super.initState();
   }
 
   @override
   void didUpdateWidget(_SimpleSwitch oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
-      //_controller.forward(from: 1.0);
-
       // During a drag we may have modified the curve, reset it if its possible
       // to do without visual discontinuation.
 
@@ -415,7 +410,71 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
       }
     }
 
-    return Semantics(
+    /// LOGIC HERE
+    return GestureDetector(
+      onHorizontalDragUpdate: (details) {
+        // Update the x-axis position within the constrained area
+        setState(() {
+          _width = context.size?.width ?? _width;
+          _horizontalPosition += details.primaryDelta! / _width;
+          _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0 - (_width / (2 * _width))); // Adjust as needed
+        });
+      },
+      onHorizontalDragEnd: (details) {
+        // Snap the switch to the on/off position when dragging ends
+        setState(() {
+          _onChanged(_horizontalPosition > 0.5);
+        });
+      },
+      child: Semantics(
+        toggled: widget.value,
+        child: LayoutBuilder(builder: (context, constraint) {
+          _width = constraint.maxWidth;
+          return Container(
+            width: _width,
+            decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              AnimatedBuilder(
+                builder: (context, child) {
+                  return FractionalTranslation(
+                    translation: Offset(!value! ? 1 - _animation.value : 0, 0),
+                    child: child,
+                  );
+                },
+                animation: _animation,
+                child: FractionalTranslation(
+                  translation: Offset(_horizontalPosition, 0),
+                  child: GestureDetector(
+                    excludeFromSemantics: true,
+                    onTap: () => _onChanged(false),
+                    child: _getChild(inactiveColor(), _width, widget.height!, _inactiveChild),
+                  ),
+                ),
+              ),
+              AnimatedBuilder(
+                builder: (context, child) {
+                  return FractionalTranslation(
+                    translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
+                    child: child,
+                  );
+                },
+                animation: _animation,
+                child: FractionalTranslation(
+                  translation: Offset(_horizontalPosition, 0),
+                  child: GestureDetector(
+                    excludeFromSemantics: true,
+                    onTap: () => _onChanged(true),
+                    child: _getChild(activeColor(), _width, widget.height!, _activeChild),
+                  ),
+                ),
+              )
+            ]),
+          );
+        }),
+      ),
+    );
+
+    /*return Semantics(
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
         _width = constraint.maxWidth;
@@ -425,7 +484,6 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             AnimatedBuilder(
               builder: (context, child) {
-                debugPrint((1 - _animation.value).toString());
                 return FractionalTranslation(
                   translation: Offset(!value! ? 1 - _animation.value : 0, 0),
                   child: child,
@@ -462,7 +520,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
           ]),
         );
       }),
-    );
+    );*/
   }
 
   Widget get _activeChild {
