@@ -421,7 +421,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
         _width = constraint.maxWidth;
         return Container(
           width: _width,
-          decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(widget.height! / 2)),
+          decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             AnimatedBuilder(
               builder: (context, child) {
@@ -435,7 +435,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               child: FractionalTranslation(
                 translation: Offset(_horizontalPosition, 0),
                 child: GestureDetector(
-                  //excludeFromSemantics: true,
+                  excludeFromSemantics: true,
                   onTap: () => _onChanged(false),
                   child: _getChild(inactiveColor(), _width, widget.height!, _inactiveChild),
                 ),
@@ -453,7 +453,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               child: FractionalTranslation(
                 translation: Offset(_horizontalPosition, 0),
                 child: GestureDetector(
-                  //excludeFromSemantics: true,
+                  excludeFromSemantics: true,
                   onTap: () => _onChanged(true),
                   child: _getChild(activeColor(), _width, widget.height!, _activeChild),
                 ),
@@ -478,7 +478,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(height / 2),
+        borderRadius: BorderRadius.circular(25),
       ),
       width: width / 2,
       height: height,
