@@ -426,7 +426,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               excludeFromSemantics: true,
               onTap: () {
                 setState(() {
-              _onChanged(false);
+                  _onChanged(false);
                   _horizontalPosition = 0;
                 });
               },
@@ -454,14 +454,14 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                   );
                 },
                 animation: _animation,
-                child: _getChild(inactiveColor(), _width, widget.height!, _inactiveChild),
+                child: _getChild(inactiveColor(), _width, widget.height!, _onDragRight ? null : _inactiveChild),
               ),
             ),
             GestureDetector(
               excludeFromSemantics: true,
               onTap: () {
                 setState(() {
-              _onChanged(true);
+                  _onChanged(true);
                   _horizontalPosition = 1;
                 });
               },
@@ -489,7 +489,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                   );
                 },
                 animation: _animation,
-                child: _getChild(activeColor(), _width, widget.height!, _activeChild),
+                child: _getChild(activeColor(), _width, widget.height!, _onDragLeft ? null : _activeChild),
               ),
             )
           ]),
