@@ -268,6 +268,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     _controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
     _tween = Tween(begin: 0.9, end: 1.0);
     _animation = CurvedAnimation(parent: _tween.animate(_controller), curve: Curves.easeOutBack);
+    _controller.forward(from: 1.0);
     super.initState();
   }
 
@@ -425,9 +426,9 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               excludeFromSemantics: true,
               onTap: () {
                 setState(() {
+              _onChanged(false);
                   _horizontalPosition = 0;
                 });
-                _onChanged(false);
               },
               onHorizontalDragUpdate: (details) {
                 // Update the x-axis position within the constrained area
@@ -460,9 +461,9 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               excludeFromSemantics: true,
               onTap: () {
                 setState(() {
+              _onChanged(true);
                   _horizontalPosition = 1;
                 });
-                _onChanged(true);
               },
               onHorizontalDragUpdate: (details) {
                 // Update the x-axis position within the constrained area
