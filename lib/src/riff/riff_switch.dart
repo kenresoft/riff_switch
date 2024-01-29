@@ -260,6 +260,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   late CurvedAnimation _animation;
   late double _width;
   double _horizontalPosition = 0.0;
+  bool _onDragLeft = false;
+  bool _onDragRight = false;
 
   @override
   void initState() {
@@ -419,59 +421,73 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
           width: _width,
           decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            AnimatedBuilder(
-              builder: (context, child) {
-                return FractionalTranslation(
-                  translation: Offset(!widget.value ? 1 - _animation.value : 0, 0),
-                  child: child,
-                );
+            GestureDetector(
+              excludeFromSemantics: true,
+              onTap: () {
+                setState(() {
+                  _horizontalPosition = 0;
+                });
+                _onChanged(false);
               },
-              animation: _animation,
-              child: GestureDetector(
-                excludeFromSemantics: true,
-                onTap: () => _onChanged(false),
-                onHorizontalDragUpdate: (details) {
-                  // Update the x-axis position within the constrained area
-                  setState(() {
-                    _width = context.size?.width ?? _width;
-                    _horizontalPosition += details.primaryDelta! / _width;
-                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
-                  });
+              onHorizontalDragUpdate: (details) {
+                // Update the x-axis position within the constrained area
+                setState(() {
+                  _onDragLeft = true;
+                  _width = context.size?.width ?? _width;
+                  _horizontalPosition += details.primaryDelta! / _width;
+                  _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                });
+              },
+              onHorizontalDragEnd: (details) {
+                // Snap the switch to the on/off position when dragging ends
+                setState(() {
+                  _onChanged(_horizontalPosition > 0.5);
+                  _onDragLeft = false;
+                });
+              },
+              child: AnimatedBuilder(
+                builder: (context, child) {
+                  return FractionalTranslation(
+                    translation: Offset(!widget.value ? (_onDragLeft ? _horizontalPosition : 1 - _animation.value) : 0, 0),
+                    child: child,
+                  );
                 },
-                onHorizontalDragEnd: (details) {
-                  // Snap the switch to the on/off position when dragging ends
-                  setState(() {
-                    _onChanged(_horizontalPosition > 0.5);
-                  });
-                },
+                animation: _animation,
                 child: _getChild(inactiveColor(), _width, widget.height!, _inactiveChild),
               ),
             ),
-            AnimatedBuilder(
-              builder: (context, child) {
-                return FractionalTranslation(
-                  translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
-                  child: child,
-                );
+            GestureDetector(
+              excludeFromSemantics: true,
+              onTap: () {
+                setState(() {
+                  _horizontalPosition = 1;
+                });
+                _onChanged(true);
               },
-              animation: _animation,
-              child: GestureDetector(
-                excludeFromSemantics: true,
-                onTap: () => _onChanged(true),
-                onHorizontalDragUpdate: (details) {
-                  // Update the x-axis position within the constrained area
-                  setState(() {
-                    _width = context.size?.width ?? _width;
-                    _horizontalPosition += details.primaryDelta! / _width;
-                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
-                  });
+              onHorizontalDragUpdate: (details) {
+                // Update the x-axis position within the constrained area
+                setState(() {
+                  _onDragRight = true;
+                  _width = context.size?.width ?? _width;
+                  _horizontalPosition += details.primaryDelta! / _width;
+                  _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                });
+              },
+              onHorizontalDragEnd: (details) {
+                // Snap the switch to the on/off position when dragging ends
+                setState(() {
+                  _onChanged(_horizontalPosition > 0.5);
+                  _onDragRight = false;
+                });
+              },
+              child: AnimatedBuilder(
+                builder: (context, child) {
+                  return FractionalTranslation(
+                    translation: Offset(widget.value ? (_onDragRight ? _horizontalPosition : _animation.value) - 1 : 0, 0),
+                    child: child,
+                  );
                 },
-                onHorizontalDragEnd: (details) {
-                  // Snap the switch to the on/off position when dragging ends
-                  setState(() {
-                    _onChanged(_horizontalPosition > 0.5);
-                  });
-                },
+                animation: _animation,
                 child: _getChild(activeColor(), _width, widget.height!, _activeChild),
               ),
             )
