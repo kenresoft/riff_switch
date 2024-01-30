@@ -433,7 +433,9 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               onHorizontalDragUpdate: (details) {
                 // Update the x-axis position within the constrained area
                 setState(() {
-                  _onDragLeft = true;
+                  if (!widget.value) {
+                    _onDragLeft = true;
+                  }
                   _width = context.size?.width ?? _width;
                   _horizontalPosition += details.primaryDelta! / _width;
                   _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
@@ -468,7 +470,9 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               onHorizontalDragUpdate: (details) {
                 // Update the x-axis position within the constrained area
                 setState(() {
-                  _onDragRight = true;
+                  if (widget.value) {
+                    _onDragLeft = true;
+                  }
                   _width = context.size?.width ?? _width;
                   _horizontalPosition += details.primaryDelta! / _width;
                   _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
@@ -570,9 +574,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   void _onChanged(bool value) {
     onChanged!(value);
     _controller.reset();
-    _controller.forward().whenComplete(() {
-      _controller.stop();
-    });
+    _controller.forward().whenComplete(() => _controller.stop());
   }
 }
 
