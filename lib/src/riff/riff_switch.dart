@@ -260,12 +260,15 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   late CurvedAnimation _animation;
   late double _width;
   double _horizontalPosition = 0.0;
+  bool _onDragLeft = false;
+  bool _onDragRight = false;
 
   @override
   void initState() {
     _controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
     _tween = Tween(begin: 0.9, end: 1.0);
     _animation = CurvedAnimation(parent: _tween.animate(_controller), curve: Curves.easeOutBack);
+    _controller.forward(from: 1.0);
     super.initState();
   }
 
@@ -411,67 +414,87 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     }
 
     /// LOGIC HERE
-    return GestureDetector(
-      onHorizontalDragUpdate: (details) {
-        // Update the x-axis position within the constrained area
-        setState(() {
-          _width = context.size?.width ?? _width;
-          _horizontalPosition += details.primaryDelta! / _width;
-          _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0 - (_width / (2 * _width))); // Adjust as needed
-        });
-      },
-      onHorizontalDragEnd: (details) {
-        // Snap the switch to the on/off position when dragging ends
-        setState(() {
-          _onChanged(_horizontalPosition > 0.5);
-        });
-      },
-      child: Semantics(
-        toggled: widget.value,
-        child: LayoutBuilder(builder: (context, constraint) {
-          _width = constraint.maxWidth;
-          return Container(
-            width: _width,
-            decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              AnimatedBuilder(
+    return Semantics(
+      toggled: widget.value,
+      child: LayoutBuilder(builder: (context, constraint) {
+        _width = constraint.maxWidth;
+        return Container(
+          width: _width,
+          decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            GestureDetector(
+              excludeFromSemantics: true,
+              onTap: () {
+                setState(() {
+                  _onChanged(false);
+                  _horizontalPosition = 0;
+                });
+              },
+              onHorizontalDragUpdate: (details) {
+                // Update the x-axis position within the constrained area
+                setState(() {
+                  _onDragLeft = true;
+                  _width = context.size?.width ?? _width;
+                  _horizontalPosition += details.primaryDelta! / _width;
+                  _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                });
+              },
+              onHorizontalDragEnd: (details) {
+                // Snap the switch to the on/off position when dragging ends
+                setState(() {
+                  _onChanged(_horizontalPosition > 0.7);
+                  _onDragLeft = false;
+                });
+              },
+              child: AnimatedBuilder(
                 builder: (context, child) {
                   return FractionalTranslation(
-                    translation: Offset(!value! ? 1 - _animation.value : 0, 0),
+                    translation: Offset(!widget.value ? (_onDragLeft ? _horizontalPosition : 1 - _animation.value) : 0, 0),
                     child: child,
                   );
                 },
                 animation: _animation,
-                child: FractionalTranslation(
-                  translation: Offset(_horizontalPosition, 0),
-                  child: GestureDetector(
-                    excludeFromSemantics: true,
-                    onTap: () => _onChanged(false),
-                    child: _getChild(inactiveColor(), _width, widget.height!, _inactiveChild),
-                  ),
-                ),
+                child: _getChild(inactiveColor(), _width, widget.height!, _onDragRight ? null : _inactiveChild),
               ),
-              AnimatedBuilder(
+            ),
+            GestureDetector(
+              excludeFromSemantics: true,
+              onTap: () {
+                setState(() {
+                  _onChanged(true);
+                  _horizontalPosition = 1;
+                });
+              },
+              onHorizontalDragUpdate: (details) {
+                // Update the x-axis position within the constrained area
+                setState(() {
+                  _onDragRight = true;
+                  _width = context.size?.width ?? _width;
+                  _horizontalPosition += details.primaryDelta! / _width;
+                  _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                });
+              },
+              onHorizontalDragEnd: (details) {
+                // Snap the switch to the on/off position when dragging ends
+                setState(() {
+                  _onChanged(_horizontalPosition > 0.7);
+                  _onDragRight = false;
+                });
+              },
+              child: AnimatedBuilder(
                 builder: (context, child) {
                   return FractionalTranslation(
-                    translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
+                    translation: Offset(widget.value ? (_onDragRight ? _horizontalPosition : _animation.value) - 1 : 0, 0),
                     child: child,
                   );
                 },
                 animation: _animation,
-                child: FractionalTranslation(
-                  translation: Offset(_horizontalPosition, 0),
-                  child: GestureDetector(
-                    excludeFromSemantics: true,
-                    onTap: () => _onChanged(true),
-                    child: _getChild(activeColor(), _width, widget.height!, _activeChild),
-                  ),
-                ),
-              )
-            ]),
-          );
-        }),
-      ),
+                child: _getChild(activeColor(), _width, widget.height!, _onDragLeft ? null : _activeChild),
+              ),
+            )
+          ]),
+        );
+      }),
     );
 
     /*return Semantics(
