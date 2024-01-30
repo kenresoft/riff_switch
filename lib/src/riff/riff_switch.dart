@@ -434,17 +434,17 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                 // Update the x-axis position within the constrained area
                 setState(() {
                   if (!widget.value) {
-                    _onDragLeft = true;
+                    _width = context.size?.width ?? _width;
+                    _horizontalPosition += details.primaryDelta! / _width;
+                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                    _onDragLeft = _horizontalPosition <= 0 ? false : true;
                   }
-                  _width = context.size?.width ?? _width;
-                  _horizontalPosition += details.primaryDelta! / _width;
-                  _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
                 });
               },
               onHorizontalDragEnd: (details) {
                 // Snap the switch to the on/off position when dragging ends
                 setState(() {
-                  _onChanged(_horizontalPosition > 0.7);
+                  _onChanged(_horizontalPosition > 0.6);
                   _onDragLeft = false;
                 });
               },
@@ -471,17 +471,17 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                 // Update the x-axis position within the constrained area
                 setState(() {
                   if (widget.value) {
-                    _onDragLeft = true;
+                    _width = context.size?.width ?? _width;
+                    _horizontalPosition += details.primaryDelta! / _width;
+                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                    _onDragRight = _horizontalPosition >= 1 ? false : true;
                   }
-                  _width = context.size?.width ?? _width;
-                  _horizontalPosition += details.primaryDelta! / _width;
-                  _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
                 });
               },
               onHorizontalDragEnd: (details) {
                 // Snap the switch to the on/off position when dragging ends
                 setState(() {
-                  _onChanged(_horizontalPosition > 0.7);
+                  _onChanged(_horizontalPosition > 0.4);
                   _onDragRight = false;
                 });
               },
@@ -574,7 +574,9 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   void _onChanged(bool value) {
     onChanged!(value);
     _controller.reset();
-    _controller.forward().whenComplete(() => _controller.stop());
+    _controller.forward().whenComplete(() {
+      _controller.stop();
+    });
   }
 }
 
