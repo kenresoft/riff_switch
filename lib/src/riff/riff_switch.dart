@@ -442,7 +442,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               onHorizontalDragEnd: (details) {
                 // Snap the switch to the on/off position when dragging ends
                 setState(() {
-                  _onChanged(_horizontalPosition > 0.5);
+                  _onChanged(_horizontalPosition > 0.7);
                   _onDragLeft = false;
                 });
               },
@@ -477,7 +477,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               onHorizontalDragEnd: (details) {
                 // Snap the switch to the on/off position when dragging ends
                 setState(() {
-                  _onChanged(_horizontalPosition > 0.5);
+                  _onChanged(_horizontalPosition > 0.7);
                   _onDragRight = false;
                 });
               },
