@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+/// Enum representing the types of RiffSwitch.
 enum RiffSwitchType { simple, decorative }
 
+/// Enum representing the types of content within RiffSwitch (text, icon, image, color).
 enum Type { text, icon, image, color }
 
+/// A Flutter widget representing a custom switch with advanced features.
+/// RiffSwitch widget allows users to toggle between two states (ON and OFF) with customizable appearance.
 class RiffSwitch extends StatelessWidget {
   const RiffSwitch({
     Key? key,
@@ -21,6 +25,7 @@ class RiffSwitch extends StatelessWidget {
     this.trackColor,
     this.thumbColor,
     required this.type,
+    this.enableSlide = true,
   }) : super(key: key);
 
   /// Whether this switch is on or off.
@@ -141,8 +146,12 @@ class RiffSwitch extends StatelessWidget {
 
   final MaterialStateProperty<Color?>? trackColor;
 
+  /// Type of RiffSwitch, either simple or decorative.
   final RiffSwitchType type;
 
+  final bool? enableSlide;
+
+  /// Returns the appropriate RiffSwitchType based on the specified type.
   RiffSwitchType get _type => type;
 
   @override
@@ -177,6 +186,7 @@ class RiffSwitch extends StatelessWidget {
       inactiveThumbColor: inactiveThumbColor,
       trackColor: trackColor,
       thumbColor: thumbColor,
+      enableSlide: enableSlide,
     );
   }
 
@@ -193,11 +203,12 @@ class RiffSwitch extends StatelessWidget {
       inactiveThumbColor: inactiveThumbColor,
       trackColor: trackColor,
       thumbColor: thumbColor,
+      enableSlide: enableSlide,
     );
   }
 }
 
-/// Simple Switch
+/// Internal implementation of the simple RiffSwitch.
 class _SimpleSwitch extends StatefulWidget {
   const _SimpleSwitch({
     Key? key,
@@ -212,11 +223,13 @@ class _SimpleSwitch extends StatefulWidget {
     this.inactiveThumbColor,
     this.activeText = const Text('ON'),
     this.inactiveText = const Text('OFF'),
+    this.enableSlide,
   })  : activeChild = null,
         inactiveChild = null,
         type = RiffSwitchType.simple,
         super(key: key);
 
+  /// Creates a decorative RiffSwitch.
   const _SimpleSwitch.decorative({
     Key? key,
     required this.value,
@@ -230,6 +243,7 @@ class _SimpleSwitch extends StatefulWidget {
     this.inactiveThumbColor,
     this.activeChild,
     this.inactiveChild,
+    this.enableSlide,
   })  : activeText = null,
         inactiveText = null,
         type = RiffSwitchType.decorative,
@@ -249,6 +263,7 @@ class _SimpleSwitch extends StatefulWidget {
   final MaterialStateProperty<Color?>? thumbColor;
   final MaterialStateProperty<Color?>? trackColor;
   final RiffSwitchType type;
+  final bool? enableSlide;
 
   @override
   State<_SimpleSwitch> createState() => _SimpleSwitchState();
@@ -263,6 +278,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   bool _onDragLeft = false;
   bool _onDragRight = false;
 
+  /// Initializes the state of the _SimpleSwitch.
   @override
   void initState() {
     _controller = AnimationController(duration: const Duration(milliseconds: 80), vsync: this);
@@ -285,6 +301,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     }
   }
 
+  /// Disposes resources when the state is no longer needed.
   @override
   void dispose() {
     _controller.dispose();
@@ -413,95 +430,23 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
       }
     }
 
-    /// LOGIC HERE
-    return Semantics(
-      toggled: widget.value,
-      child: LayoutBuilder(builder: (context, constraint) {
-        _width = constraint.maxWidth;
-        return Container(
-          width: _width,
-          decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            GestureDetector(
-              excludeFromSemantics: true,
-              onTap: () {
-                setState(() {
-                  _onChanged(false);
-                  _horizontalPosition = 0;
-                });
-              },
-              onHorizontalDragUpdate: (details) {
-                // Update the x-axis position within the constrained area
-                setState(() {
-                  if (!widget.value) {
-                    _onDragLeft = true;
-                  }
-                  _width = context.size?.width ?? _width;
-                  _horizontalPosition += details.primaryDelta! / _width;
-                  _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
-                });
-              },
-              onHorizontalDragEnd: (details) {
-                // Snap the switch to the on/off position when dragging ends
-                setState(() {
-                  _onChanged(_horizontalPosition > 0.7);
-                  _onDragLeft = false;
-                });
-              },
-              child: AnimatedBuilder(
-                builder: (context, child) {
-                  return FractionalTranslation(
-                    translation: Offset(!widget.value ? (_onDragLeft ? _horizontalPosition : 1 - _animation.value) : 0, 0),
-                    child: child,
-                  );
-                },
-                animation: _animation,
-                child: _getChild(inactiveColor(), _width, widget.height!, _onDragRight ? null : _inactiveChild),
-              ),
-            ),
-            GestureDetector(
-              excludeFromSemantics: true,
-              onTap: () {
-                setState(() {
-                  _onChanged(true);
-                  _horizontalPosition = 1;
-                });
-              },
-              onHorizontalDragUpdate: (details) {
-                // Update the x-axis position within the constrained area
-                setState(() {
-                  if (widget.value) {
-                    _onDragLeft = true;
-                  }
-                  _width = context.size?.width ?? _width;
-                  _horizontalPosition += details.primaryDelta! / _width;
-                  _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
-                });
-              },
-              onHorizontalDragEnd: (details) {
-                // Snap the switch to the on/off position when dragging ends
-                setState(() {
-                  _onChanged(_horizontalPosition > 0.7);
-                  _onDragRight = false;
-                });
-              },
-              child: AnimatedBuilder(
-                builder: (context, child) {
-                  return FractionalTranslation(
-                    translation: Offset(widget.value ? (_onDragRight ? _horizontalPosition : _animation.value) - 1 : 0, 0),
-                    child: child,
-                  );
-                },
-                animation: _animation,
-                child: _getChild(activeColor(), _width, widget.height!, _onDragLeft ? null : _activeChild),
-              ),
-            )
-          ]),
-        );
-      }),
-    );
+    if (widget.enableSlide!) {
+      return buildSlidableSwitch(
+        getTrackColor,
+        inactiveColor,
+        activeColor,
+      );
+    } else {
+      return buildNonSlidableSwitch(
+        getTrackColor,
+        inactiveColor,
+        activeColor,
+      );
+    }
+  }
 
-    /*return Semantics(
+  Semantics buildNonSlidableSwitch(Color? Function() getTrackColor, Color Function() inactiveColor, Color Function() activeColor) {
+    return Semantics(
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
         _width = constraint.maxWidth;
@@ -547,7 +492,109 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
           ]),
         );
       }),
-    );*/
+    );
+  }
+
+  Semantics buildSlidableSwitch(Color? Function() getTrackColor, Color Function() inactiveColor, Color Function() activeColor) {
+    return Semantics(
+      toggled: widget.value,
+      child: LayoutBuilder(builder: (context, constraint) {
+        // Calculate the available width for the switch.
+        _width = constraint.maxWidth;
+
+        // Main container of the switch with a rounded border and track color.
+        return Container(
+          width: _width,
+          decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            // Left side of the switch (OFF state).
+            GestureDetector(
+              excludeFromSemantics: true,
+              onTap: () {
+                // Handle tap to turn OFF.
+                setState(() {
+                  _onChanged(false);
+                  _horizontalPosition = 0;
+                });
+              },
+              onHorizontalDragUpdate: (details) {
+                // Update the x-axis position within the constrained area
+                // Handle horizontal drag to update position (OFF state).
+                setState(() {
+                  if (!widget.value) {
+                    _width = context.size?.width ?? _width;
+                    _horizontalPosition += details.primaryDelta! / _width;
+                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                    _onDragLeft = _horizontalPosition <= 0 ? false : true;
+                  }
+                });
+              },
+              onHorizontalDragEnd: (details) {
+                // Snap the switch to the on/off position when dragging ends
+                // Handle drag end to snap the switch to the desired position (OFF state).
+                setState(() {
+                  _onChanged(_horizontalPosition > 0.6);
+                  _onDragLeft = false;
+                });
+              },
+              child: AnimatedBuilder(
+                builder: (context, child) {
+                  // Animate the transition of the switch thumb based on drag or tap.
+                  return FractionalTranslation(
+                    translation: Offset(!widget.value ? (_onDragLeft ? _horizontalPosition : 1 - _animation.value) : 0, 0),
+                    child: child,
+                  );
+                },
+                animation: _animation,
+                child: _getChild(inactiveColor(), _width, widget.height!, _onDragRight ? null : _inactiveChild),
+              ),
+            ),
+            // Right side of the switch (ON state).
+            GestureDetector(
+              excludeFromSemantics: true,
+              onTap: () {
+                // Handle tap to turn ON.
+                setState(() {
+                  _onChanged(true);
+                  _horizontalPosition = 1;
+                });
+              },
+              onHorizontalDragUpdate: (details) {
+                // Update the x-axis position within the constrained area
+                // Handle horizontal drag to update position (ON state).
+                setState(() {
+                  if (widget.value) {
+                    _width = context.size?.width ?? _width;
+                    _horizontalPosition += details.primaryDelta! / _width;
+                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                    _onDragRight = _horizontalPosition >= 1 ? false : true;
+                  }
+                });
+              },
+              onHorizontalDragEnd: (details) {
+                // Snap the switch to the on/off position when dragging ends
+                // Handle drag end to snap the switch to the desired position (ON state).
+                setState(() {
+                  _onChanged(_horizontalPosition > 0.4);
+                  _onDragRight = false;
+                });
+              },
+              child: AnimatedBuilder(
+                builder: (context, child) {
+                  // Animate the transition of the switch thumb based on drag or tap.
+                  return FractionalTranslation(
+                    translation: Offset(widget.value ? (_onDragRight ? _horizontalPosition : _animation.value) - 1 : 0, 0),
+                    child: child,
+                  );
+                },
+                animation: _animation,
+                child: _getChild(activeColor(), _width, widget.height!, _onDragLeft ? null : _activeChild),
+              ),
+            ),
+          ]),
+        );
+      }),
+    );
   }
 
   Widget get _activeChild {
@@ -574,12 +621,15 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   void _onChanged(bool value) {
     onChanged!(value);
     _controller.reset();
-    _controller.forward().whenComplete(() => _controller.stop());
+    _controller.forward().whenComplete(() {
+      _controller.stop();
+    });
   }
 }
 
 /// Decorative Switch
 
+/// Default theme data for the switch.
 class _SwitchDefaultsM3 extends SwitchThemeData {
   _SwitchDefaultsM3(BuildContext context) : _colors = Theme.of(context).colorScheme;
 
