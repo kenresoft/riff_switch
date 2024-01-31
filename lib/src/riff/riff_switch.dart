@@ -495,7 +495,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     );
   }
 
-  Semantics buildSlidableSwitch(Color? getTrackColor(), Color inactiveColor(), Color activeColor()) {
+  Semantics buildSlidableSwitch(Color? Function() getTrackColor, Color Function() inactiveColor, Color Function() activeColor) {
     return Semantics(
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
