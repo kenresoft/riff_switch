@@ -53,6 +53,7 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
               _switchValue = value;
             }),
             type: RiffSwitchType.simple,
+            enableSlide: false,
           ),
 
           const SizedBox(height: 30),
