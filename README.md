@@ -169,7 +169,9 @@ More examples from [main.dart](example/lib/main.dart)
 
 <img alt="Screenshot 2" height="500" src="screenshots/Screenshot_2.png" title="Screenshot 2" width="200"/>
 
-<img alt="Screen Record" height="500" src="screenshots/Screen_recording_1.gif" title="Screen Record" width="200"/>
+<img alt="Screen Record 1" height="500" src="screenshots/Screen_recording_1.gif" title="Screen Record 1" width="200"/>
+
+<img alt="Screen Record 2" height="500" src="screenshots/Screen_recording_2.gif" title="Screen Record 2" width="200"/>
 
 
 ## Contributing
