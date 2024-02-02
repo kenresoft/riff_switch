@@ -10,7 +10,7 @@ enum Type { text, icon, image, color }
 /// RiffSwitch widget allows users to toggle between two states (ON and OFF) with customizable appearance.
 class RiffSwitch extends StatelessWidget {
   const RiffSwitch({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     this.height = 30,
@@ -26,7 +26,7 @@ class RiffSwitch extends StatelessWidget {
     this.thumbColor,
     required this.type,
     this.enableSlide = true,
-  }) : super(key: key);
+  });
 
   /// Whether this switch is on or off.
   ///
@@ -524,7 +524,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                   if (!widget.value) {
                     _width = context.size?.width ?? _width;
                     _horizontalPosition += details.primaryDelta! / _width;
-                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
                     _onDragLeft = _horizontalPosition <= 0 ? false : true;
                   }
                 });
@@ -566,7 +566,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                   if (widget.value) {
                     _width = context.size?.width ?? _width;
                     _horizontalPosition += details.primaryDelta! / _width;
-                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0); // Adjust as needed
+                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
                     _onDragRight = _horizontalPosition >= 1 ? false : true;
                   }
                 });
@@ -621,9 +621,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   void _onChanged(bool value) {
     onChanged!(value);
     _controller.reset();
-    _controller.forward().whenComplete(() {
-      _controller.stop();
-    });
+    _controller.forward().whenComplete(() => _controller.stop());
   }
 }
 
