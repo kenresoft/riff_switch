@@ -23,9 +23,7 @@ class MyApp extends StatelessWidget {
 }
 
 class RiffSwitchExample extends StatefulWidget {
-  const RiffSwitchExample({Key? key, title})
-      : _title = title,
-        super(key: key);
+  const RiffSwitchExample({super.key, title}) : _title = title;
 
   final String _title;
 
@@ -34,7 +32,10 @@ class RiffSwitchExample extends StatefulWidget {
 }
 
 class _RiffSwitchExampleState extends State<RiffSwitchExample> {
-  late bool _switchValue = false;
+  late bool _switchValue_1 = false;
+  late bool _switchValue_2 = false;
+  late bool _switchValue_3 = false;
+  late bool _switchValue_4 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +49,9 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
 
           // 1
           RiffSwitch(
-            value: _switchValue,
+            value: _switchValue_1,
             onChanged: (value) => setState(() {
-              _switchValue = value;
+              _switchValue_1 = value;
             }),
             type: RiffSwitchType.simple,
             enableSlide: false,
@@ -60,9 +61,9 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
 
           // 2
           RiffSwitch(
-            value: _switchValue,
+            value: _switchValue_2,
             onChanged: (value) => setState(() {
-              _switchValue = value;
+              _switchValue_2 = value;
             }),
             type: RiffSwitchType.simple,
             activeText: const Text("Accept"),
@@ -85,9 +86,9 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
 
           // 3
           RiffSwitch(
-            value: _switchValue,
+            value: _switchValue_3,
             onChanged: (value) => setState(() {
-              _switchValue = value;
+              _switchValue_3 = value;
             }),
             type: RiffSwitchType.decorative,
             activeColor: Colors.orange,
@@ -97,9 +98,9 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
 
           // 4
           RiffSwitch(
-            value: _switchValue,
+            value: _switchValue_4,
             onChanged: (value) => setState(() {
-              _switchValue = value;
+              _switchValue_4 = value;
             }),
             type: RiffSwitchType.decorative,
             activeChild: const Card(
