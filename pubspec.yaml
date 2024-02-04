@@ -1,7 +1,7 @@
 name: riff_switch
 description: Experience seamless transitions and engaging interactions with RiffSwitch.
 version: 0.0.1
-homepage:
+homepage: https://github.com/kenresoft/riff_switch
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
