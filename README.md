@@ -31,10 +31,7 @@ To use RiffSwitch in your Flutter project, add the following to your `pubspec.ya
 
 ```yaml
 dependencies:
-  riff_switch:
-    git:
-      url: git@github.com:kenresoft/riff_switch.git
-      ref: release
+  riff_switch: ^0.0.3
 ```
 Then, run:
 
