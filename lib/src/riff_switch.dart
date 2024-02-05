@@ -211,7 +211,6 @@ class RiffSwitch extends StatelessWidget {
 /// Internal implementation of the simple RiffSwitch.
 class _SimpleSwitch extends StatefulWidget {
   const _SimpleSwitch({
-    Key? key,
     required this.value,
     required this.onChanged,
     this.height,
@@ -226,12 +225,10 @@ class _SimpleSwitch extends StatefulWidget {
     this.enableSlide,
   })  : activeChild = null,
         inactiveChild = null,
-        type = RiffSwitchType.simple,
-        super(key: key);
+        type = RiffSwitchType.simple;
 
   /// Creates a decorative RiffSwitch.
   const _SimpleSwitch.decorative({
-    Key? key,
     required this.value,
     required this.onChanged,
     this.height,
@@ -246,8 +243,7 @@ class _SimpleSwitch extends StatefulWidget {
     this.enableSlide,
   })  : activeText = null,
         inactiveText = null,
-        type = RiffSwitchType.decorative,
-        super(key: key);
+        type = RiffSwitchType.decorative;
 
   final bool value;
   final ValueChanged<bool>? onChanged;
