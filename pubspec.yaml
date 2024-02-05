@@ -1,6 +1,7 @@
 name: riff_switch
-description: Experience seamless transitions and engaging interactions with RiffSwitch.
-version: 0.0.2
+description: Experience seamless transitions and engaging interactions with RiffSwitch. 
+  The switch library that empowers effortless sliding effects and captivating animations.
+version: 0.0.3
 homepage: https://github.com/kenresoft/riff_switch
 
 environment:

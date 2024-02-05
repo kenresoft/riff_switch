@@ -14,6 +14,10 @@ class RiffSwitch extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.height = 30,
+    this.width,
+    this.borderWidth = 0,
+    this.borderRadius = 25,
+    this.borderColor = Colors.blue,
     this.activeTrackColor,
     this.activeText = const Text('ON'),
     this.inactiveText = const Text('OFF'),
@@ -57,8 +61,30 @@ class RiffSwitch extends StatelessWidget {
   /// ```
   final ValueChanged<bool>? onChanged;
 
-  /// The height of this switch
+  /// The height of the switch.
+  ///
+  /// This value must be less than or equal to half of the width of the switch.
+  /// If not provided, a default height of 50.0 will be used.
   final double? height;
+  /// The width of the switch.
+  ///
+  /// If not provided, the width will be calculated based on the constraints.
+  final double? width;
+
+  /// The width of the border around the switch.
+  ///
+  /// If not provided, the switch will have no border.
+  final double? borderWidth;
+
+  /// The radius of the switch corners.
+  ///
+  /// If not provided, a default radius of 25.0 will be used.
+  final double? borderRadius;
+
+  /// The color of the border around the switch.
+  ///
+  /// If not provided, the switch will have no border color.
+  final Color? borderColor;
 
   /// The color to use when this switch is on.
   ///
@@ -178,6 +204,7 @@ class RiffSwitch extends StatelessWidget {
       value: value,
       onChanged: onChanged,
       height: height,
+      width: width,
       activeTrackColor: activeTrackColor,
       activeText: activeText,
       inactiveText: inactiveText,
@@ -195,6 +222,10 @@ class RiffSwitch extends StatelessWidget {
       value: value,
       onChanged: onChanged,
       height: height,
+      width: width,
+      borderWidth: borderWidth,
+      borderRadius: borderRadius,
+      borderColor: borderColor,
       activeTrackColor: activeTrackColor,
       activeChild: activeChild,
       inactiveChild: inactiveChild,
@@ -223,7 +254,11 @@ class _SimpleSwitch extends StatefulWidget {
     this.activeText = const Text('ON'),
     this.inactiveText = const Text('OFF'),
     this.enableSlide,
-  })  : activeChild = null,
+    this.width,
+  })  : borderWidth = 0,
+        borderRadius = 25,
+        borderColor = Colors.blue,
+        activeChild = null,
         inactiveChild = null,
         type = RiffSwitchType.simple;
 
@@ -232,6 +267,10 @@ class _SimpleSwitch extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.height,
+    this.width = double.infinity,
+    this.borderWidth,
+    this.borderRadius = 25,
+    this.borderColor = Colors.blue,
     this.trackColor,
     this.thumbColor,
     this.activeColor,
@@ -248,6 +287,10 @@ class _SimpleSwitch extends StatefulWidget {
   final bool value;
   final ValueChanged<bool>? onChanged;
   final double? height;
+  final double? width;
+  final double? borderWidth;
+  final double? borderRadius;
+  final Color? borderColor;
   final Color? activeColor;
   final Color? activeTrackColor;
   final Color? inactiveThumbColor;
@@ -269,7 +312,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   late AnimationController _controller;
   late Tween<double> _tween;
   late CurvedAnimation _animation;
-  late double _width;
+
+  //late double _width;
   double _horizontalPosition = 0.0;
   bool _onDragLeft = false;
   bool _onDragRight = false;
@@ -281,6 +325,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     _tween = Tween(begin: 0.9, end: 1.0);
     _animation = CurvedAnimation(parent: _tween.animate(_controller), curve: Curves.easeOutBack);
     _controller.forward(from: 1.0);
+    //_width = widget.width!;
     super.initState();
   }
 
@@ -441,51 +486,73 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     }
   }
 
-  Semantics buildNonSlidableSwitch(Color? Function() getTrackColor, Color Function() inactiveColor, Color Function() activeColor) {
+  Semantics buildNonSlidableSwitch(Color? Function() getTrackColor, Color Function() inactiveColor, Color Function() activeColor,) {
     return Semantics(
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
-        _width = constraint.maxWidth;
+        var width = constraint.maxWidth;
         return Container(
-          width: _width,
-          decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            AnimatedBuilder(
-              builder: (context, child) {
-                return FractionalTranslation(
-                  translation: Offset(!value! ? 1 - _animation.value : 0, 0),
-                  child: child,
-                );
-              },
-              animation: _animation,
-              child: FractionalTranslation(
-                translation: Offset(_horizontalPosition, 0),
-                child: GestureDetector(
-                  excludeFromSemantics: true,
-                  onTap: () => _onChanged(false),
-                  child: _getChild(inactiveColor(), _width, widget.height!, _inactiveChild),
-                ),
-              ),
-              //),
+          width: widget.width == null ? width : widget.width!,
+          height: widget.height! + (widget.borderWidth! * 2),
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
+          ),
+          child: Container(
+            //padding: const EdgeInsets.symmetric(horizontal: 5),
+            width: widget.width == null ? width - (widget.borderWidth! * 2) : widget.width! - (widget.borderWidth! * 2),
+            decoration: BoxDecoration(
+              color: getTrackColor(),
+              borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
             ),
-            AnimatedBuilder(
-              builder: (context, child) {
-                return FractionalTranslation(
-                  translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
-                  child: child,
-                );
-              },
-              animation: _animation,
-              child: FractionalTranslation(
-                translation: Offset(_horizontalPosition, 0),
-                child: GestureDetector(
-                  excludeFromSemantics: true,
-                  onTap: () => _onChanged(true),
-                  child: _getChild(activeColor(), _width, widget.height!, _activeChild),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              AnimatedBuilder(
+                builder: (context, child) {
+                  return FractionalTranslation(
+                    translation: Offset(!value! ? 1 - _animation.value : 0, 0),
+                    child: child,
+                  );
+                },
+                animation: _animation,
+                child: FractionalTranslation(
+                  translation: Offset(_horizontalPosition, 0),
+                  child: GestureDetector(
+                    excludeFromSemantics: true,
+                    onTap: () => _onChanged(false),
+                    child: _getChild(
+                      inactiveColor(),
+                      widget.width == null ? width - (widget.borderWidth! * 2) : widget.width! - (widget.borderWidth! * 2),
+                      widget.height ?? 50,
+                      _inactiveChild,
+                    ),
+                  ),
                 ),
+                //),
               ),
-            )
-          ]),
+              AnimatedBuilder(
+                builder: (context, child) {
+                  return FractionalTranslation(
+                    translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
+                    child: child,
+                  );
+                },
+                animation: _animation,
+                child: FractionalTranslation(
+                  translation: Offset(_horizontalPosition, 0),
+                  child: GestureDetector(
+                    excludeFromSemantics: true,
+                    onTap: () => _onChanged(true),
+                    child: _getChild(
+                      activeColor(),
+                      widget.width == null ? width - (widget.borderWidth! * 2) : widget.width! - (widget.borderWidth! * 2),
+                      widget.height ?? 50,
+                      _activeChild,
+                    ),
+                  ),
+                ),
+              )
+            ]),
+          ),
         );
       }),
     );
@@ -496,11 +563,11 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
         // Calculate the available width for the switch.
-        _width = constraint.maxWidth;
+        //_width = constraint.maxWidth;
 
         // Main container of the switch with a rounded border and track color.
         return Container(
-          width: _width,
+          width: constraint.maxWidth,
           decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             // Left side of the switch (OFF state).
@@ -518,8 +585,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                 // Handle horizontal drag to update position (OFF state).
                 setState(() {
                   if (!widget.value) {
-                    _width = context.size?.width ?? _width;
-                    _horizontalPosition += details.primaryDelta! / _width;
+                    // _width = context.size?.width ?? _width;
+                    _horizontalPosition += details.primaryDelta! / constraint.maxWidth;
                     _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
                     _onDragLeft = _horizontalPosition <= 0 ? false : true;
                   }
@@ -542,7 +609,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                   );
                 },
                 animation: _animation,
-                child: _getChild(inactiveColor(), _width, widget.height!, _onDragRight ? null : _inactiveChild),
+                child: _getChild(inactiveColor(), constraint.maxWidth, widget.height!, _onDragRight ? null : _inactiveChild),
               ),
             ),
             // Right side of the switch (ON state).
@@ -560,8 +627,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                 // Handle horizontal drag to update position (ON state).
                 setState(() {
                   if (widget.value) {
-                    _width = context.size?.width ?? _width;
-                    _horizontalPosition += details.primaryDelta! / _width;
+                    // _width = context.size?.width ?? _width;
+                    _horizontalPosition += details.primaryDelta! / constraint.maxWidth;
                     _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
                     _onDragRight = _horizontalPosition >= 1 ? false : true;
                   }
@@ -584,7 +651,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                   );
                 },
                 animation: _animation,
-                child: _getChild(activeColor(), _width, widget.height!, _onDragLeft ? null : _activeChild),
+                child: _getChild(activeColor(), constraint.maxWidth, widget.height!, _onDragLeft ? null : _activeChild),
               ),
             ),
           ]),
@@ -606,7 +673,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.horizontal(left: Radius.circular(widget.borderRadius ?? 25), right: Radius.circular(widget.borderRadius!)),
       ),
       width: width / 2,
       height: height,
