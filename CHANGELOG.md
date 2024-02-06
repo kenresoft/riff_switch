@@ -23,12 +23,14 @@
 
 **Features**:
 
-* Added badges for pub package, pub points, popularity, likes, stars, style: effective_dart, Awesome Flutter, and license to `README.md`.
+* Added badges for pub package, pub points, popularity, likes, stars, Awesome Flutter, and license to `README.md`.
 * Added links to pub package, GitHub repository, Awesome Flutter, and license in `README.md`.
 * Updated screenshots in `README.md`.
 
-## [0.0.3] - 2024-02-04
+## [0.0.3] - 2024-02-06
 
 **Features**:
 
-* 
+* Added a border to the switch. 
+* Improved logic to calculate the size of the switch. 
+* Added widget debugFillProperties.
