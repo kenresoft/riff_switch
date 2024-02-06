@@ -44,87 +44,125 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onBackground,
       appBar: AppBar(title: Text(widget._title)),
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Column(children: [
-          const SizedBox(height: 30),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Column(children: [
+              const SizedBox(height: 30),
 
-          // 1
-          SizedBox(
-            // width: 100,
-            child: Transform.rotate(
-              angle: 0,
-              child: RiffSwitch(
-                value: _switchValue_1,
+              // 1
+              SizedBox(
+                width: 160,
+                height: 80,
+                child: Transform.rotate(
+                  angle: 0,
+                  child: RiffSwitch(
+                    value: _switchValue_1,
+                    onChanged: (value) => setState(() {
+                      _switchValue_1 = value;
+                    }),
+                    type: RiffSwitchType.simple,
+                    enableSlide: false,
+                    height: 80, /// height must not be greater than width/2 (i.e. the max height)
+                    width: 160,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              // 2
+              RiffSwitch(
+                value: _switchValue_2,
                 onChanged: (value) => setState(() {
-                  _switchValue_1 = value;
+                  _switchValue_2 = value;
+                }),
+                type: RiffSwitchType.simple,
+                activeText: const Text("Accept"),
+                inactiveText: const Text("Decline"),
+                thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return Colors.greenAccent;
+                  }
+                  return Colors.pinkAccent;
+                }),
+                trackColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return Colors.grey;
+                  }
+                  return Colors.grey;
+                }),
+              ),
+
+              const SizedBox(height: 30),
+
+              // 2
+              RiffSwitch(
+                value: _switchValue_2,
+                onChanged: (value) => setState(() {
+                  _switchValue_2 = value;
+                }),
+                type: RiffSwitchType.simple,
+                activeText: const Text("Accept"),
+                inactiveText: const Text("Decline"),
+                thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return Colors.greenAccent;
+                  }
+                  return Colors.pinkAccent;
+                }),
+                trackColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return Colors.grey;
+                  }
+                  return Colors.grey;
+                }),
+                height: 80,
+                width: double.infinity,
+              ),
+
+              const SizedBox(height: 30),
+
+              // 3
+              RiffSwitch(
+                value: _switchValue_3,
+                onChanged: (value) => setState(() {
+                  _switchValue_3 = value;
                 }),
                 type: RiffSwitchType.decorative,
-                enableSlide: false,
-                height: 60,  /// height must not be greater than width/2 (i.e. the max height)
+                activeColor: Colors.orange,
+                height: 60,
                 width: 120,
                 borderWidth: 3,
                 borderRadius: 150,
               ),
-            ),
+
+              const SizedBox(height: 30),
+
+              // 4
+              RiffSwitch(
+                value: _switchValue_4,
+                onChanged: (value) => setState(() {
+                  _switchValue_4 = value;
+                }),
+                type: RiffSwitchType.decorative,
+                activeChild: const Card(
+                  color: CupertinoColors.systemBlue,
+                  child: FlutterLogo(),
+                ),
+                inactiveChild: const Card(
+                  color: CupertinoColors.systemYellow,
+                  child: FlutterLogo(),
+                ),
+                height: 60,
+                width: 120,
+                borderWidth: 3,
+                borderRadius: 1,
+              )
+            ]),
           ),
-
-          const SizedBox(height: 30),
-
-          // 2
-          RiffSwitch(
-            value: _switchValue_2,
-            onChanged: (value) => setState(() {
-              _switchValue_2 = value;
-            }),
-            type: RiffSwitchType.simple,
-            activeText: const Text("Accept"),
-            inactiveText: const Text("Decline"),
-            thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-              if (states.contains(MaterialState.selected)) {
-                return Colors.greenAccent;
-              }
-              return Colors.pinkAccent;
-            }),
-            trackColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-              if (states.contains(MaterialState.selected)) {
-                return Colors.grey;
-              }
-              return Colors.grey;
-            }),
-          ),
-
-          const SizedBox(height: 30),
-
-          // 3
-          RiffSwitch(
-            value: _switchValue_3,
-            onChanged: (value) => setState(() {
-              _switchValue_3 = value;
-            }),
-            type: RiffSwitchType.decorative,
-            activeColor: Colors.orange,
-          ),
-
-          const SizedBox(height: 30),
-
-          // 4
-          RiffSwitch(
-            value: _switchValue_4,
-            onChanged: (value) => setState(() {
-              _switchValue_4 = value;
-            }),
-            type: RiffSwitchType.decorative,
-            activeChild: const Card(
-              color: CupertinoColors.systemBlue,
-              child: FlutterLogo(),
-            ),
-            inactiveChild: const Card(
-              color: CupertinoColors.systemYellow,
-              child: FlutterLogo(),
-            ),
-          )
-        ]),
+        ),
       ),
     );
   }
