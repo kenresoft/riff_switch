@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Enum representing the types of RiffSwitch.
@@ -9,12 +10,12 @@ enum Type { text, icon, image, color }
 /// A Flutter widget representing a custom switch with advanced features.
 /// RiffSwitch widget allows users to toggle between two states (ON and OFF) with customizable appearance.
 class RiffSwitch extends StatelessWidget {
-  const RiffSwitch({
+  RiffSwitch({
     super.key,
     required this.value,
     required this.onChanged,
     this.height = 30,
-    this.width,
+    this.width = 150,
     this.borderWidth = 0,
     this.borderRadius = 25,
     this.borderColor = Colors.blue,
@@ -30,7 +31,7 @@ class RiffSwitch extends StatelessWidget {
     this.thumbColor,
     required this.type,
     this.enableSlide = true,
-  });
+  }) : assert(height! <= width! / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
 
   /// Whether this switch is on or off.
   ///
@@ -66,6 +67,7 @@ class RiffSwitch extends StatelessWidget {
   /// This value must be less than or equal to half of the width of the switch.
   /// If not provided, a default height of 50.0 will be used.
   final double? height;
+
   /// The width of the switch.
   ///
   /// If not provided, the width will be calculated based on the constraints.
@@ -245,6 +247,7 @@ class _SimpleSwitch extends StatefulWidget {
     required this.value,
     required this.onChanged,
     this.height,
+    this.width,
     this.trackColor,
     this.thumbColor,
     this.activeColor,
@@ -254,7 +257,6 @@ class _SimpleSwitch extends StatefulWidget {
     this.activeText = const Text('ON'),
     this.inactiveText = const Text('OFF'),
     this.enableSlide,
-    this.width,
   })  : borderWidth = 0,
         borderRadius = 25,
         borderColor = Colors.blue,
@@ -268,7 +270,7 @@ class _SimpleSwitch extends StatefulWidget {
     required this.onChanged,
     this.height,
     this.width = double.infinity,
-    this.borderWidth,
+    this.borderWidth = 3,
     this.borderRadius = 25,
     this.borderColor = Colors.blue,
     this.trackColor,
@@ -312,8 +314,6 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   late AnimationController _controller;
   late Tween<double> _tween;
   late CurvedAnimation _animation;
-
-  //late double _width;
   double _horizontalPosition = 0.0;
   bool _onDragLeft = false;
   bool _onDragRight = false;
@@ -486,21 +486,26 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     }
   }
 
-  Semantics buildNonSlidableSwitch(Color? Function() getTrackColor, Color Function() inactiveColor, Color Function() activeColor,) {
+  Semantics buildNonSlidableSwitch(Color? Function() getTrackColor, Color Function() inactiveColor, Color Function() activeColor) {
     return Semantics(
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
-        var width = constraint.maxWidth;
+        // Ensure height is not greater than half of the width
+        assert(widget.height! <= constraint.maxWidth / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: ${widget.height} and width is: ${constraint.maxWidth}\n');
+        // Calculate the available width for the switch.
+        var maxWidth = constraint.maxWidth;
+        var realWidth = widget.width!;
+        double width;
+        width = widget.width == null ? maxWidth : (realWidth > maxWidth ? maxWidth : realWidth);
         return Container(
-          width: widget.width == null ? width : widget.width!,
+          width: widget.width == null ? width : realWidth,
           height: widget.height! + (widget.borderWidth! * 2),
           decoration: BoxDecoration(
-            color: Colors.red,
             borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
           ),
           child: Container(
             //padding: const EdgeInsets.symmetric(horizontal: 5),
-            width: widget.width == null ? width - (widget.borderWidth! * 2) : widget.width! - (widget.borderWidth! * 2),
+            width: width - (widget.borderWidth! * 2),
             decoration: BoxDecoration(
               color: getTrackColor(),
               borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
@@ -521,7 +526,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     onTap: () => _onChanged(false),
                     child: _getChild(
                       inactiveColor(),
-                      widget.width == null ? width - (widget.borderWidth! * 2) : widget.width! - (widget.borderWidth! * 2),
+                      width - (widget.borderWidth! * 2),
                       widget.height ?? 50,
                       _inactiveChild,
                     ),
@@ -544,7 +549,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     onTap: () => _onChanged(true),
                     child: _getChild(
                       activeColor(),
-                      widget.width == null ? width - (widget.borderWidth! * 2) : widget.width! - (widget.borderWidth! * 2),
+                      width - (widget.borderWidth! * 2),
                       widget.height ?? 50,
                       _activeChild,
                     ),
@@ -562,99 +567,122 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     return Semantics(
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
+        // Ensure height is not greater than half of the width
+        assert(widget.height! <= constraint.maxWidth / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: ${widget.height} and width is: ${constraint.maxWidth}\n');
         // Calculate the available width for the switch.
-        //_width = constraint.maxWidth;
-
-        // Main container of the switch with a rounded border and track color.
+        var maxWidth = constraint.maxWidth;
+        var realWidth = widget.width!;
+        var width = widget.width == null ? maxWidth : (realWidth > maxWidth ? maxWidth : widget.width!);
         return Container(
-          width: constraint.maxWidth,
-          decoration: BoxDecoration(color: getTrackColor(), borderRadius: BorderRadius.circular(25)),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            // Left side of the switch (OFF state).
-            GestureDetector(
-              excludeFromSemantics: true,
-              onTap: () {
-                // Handle tap to turn OFF.
-                setState(() {
-                  _onChanged(false);
-                  _horizontalPosition = 0;
-                });
-              },
-              onHorizontalDragUpdate: (details) {
-                // Update the x-axis position within the constrained area
-                // Handle horizontal drag to update position (OFF state).
-                setState(() {
-                  if (!widget.value) {
-                    // _width = context.size?.width ?? _width;
-                    _horizontalPosition += details.primaryDelta! / constraint.maxWidth;
-                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
-                    _onDragLeft = _horizontalPosition <= 0 ? false : true;
-                  }
-                });
-              },
-              onHorizontalDragEnd: (details) {
-                // Snap the switch to the on/off position when dragging ends
-                // Handle drag end to snap the switch to the desired position (OFF state).
-                setState(() {
-                  _onChanged(_horizontalPosition > 0.6);
-                  _onDragLeft = false;
-                });
-              },
-              child: AnimatedBuilder(
-                builder: (context, child) {
-                  // Animate the transition of the switch thumb based on drag or tap.
-                  return FractionalTranslation(
-                    translation: Offset(!widget.value ? (_onDragLeft ? _horizontalPosition : 1 - _animation.value) : 0, 0),
-                    child: child,
-                  );
-                },
-                animation: _animation,
-                child: _getChild(inactiveColor(), constraint.maxWidth, widget.height!, _onDragRight ? null : _inactiveChild),
-              ),
+          width: widget.width == null ? width : realWidth,
+          height: widget.height! + (widget.borderWidth! * 2),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
+          ),
+          child: Container(
+            //padding: const EdgeInsets.symmetric(horizontal: 5),
+            width: width - (widget.borderWidth! * 2),
+            decoration: BoxDecoration(
+              color: getTrackColor(),
+              borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
             ),
-            // Right side of the switch (ON state).
-            GestureDetector(
-              excludeFromSemantics: true,
-              onTap: () {
-                // Handle tap to turn ON.
-                setState(() {
-                  _onChanged(true);
-                  _horizontalPosition = 1;
-                });
-              },
-              onHorizontalDragUpdate: (details) {
-                // Update the x-axis position within the constrained area
-                // Handle horizontal drag to update position (ON state).
-                setState(() {
-                  if (widget.value) {
-                    // _width = context.size?.width ?? _width;
-                    _horizontalPosition += details.primaryDelta! / constraint.maxWidth;
-                    _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
-                    _onDragRight = _horizontalPosition >= 1 ? false : true;
-                  }
-                });
-              },
-              onHorizontalDragEnd: (details) {
-                // Snap the switch to the on/off position when dragging ends
-                // Handle drag end to snap the switch to the desired position (ON state).
-                setState(() {
-                  _onChanged(_horizontalPosition > 0.4);
-                  _onDragRight = false;
-                });
-              },
-              child: AnimatedBuilder(
-                builder: (context, child) {
-                  // Animate the transition of the switch thumb based on drag or tap.
-                  return FractionalTranslation(
-                    translation: Offset(widget.value ? (_onDragRight ? _horizontalPosition : _animation.value) - 1 : 0, 0),
-                    child: child,
-                  );
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              // Left side of the switch (OFF state).
+              GestureDetector(
+                excludeFromSemantics: true,
+                onTap: () {
+                  // Handle tap to turn OFF.
+                  setState(() {
+                    _onChanged(false);
+                    _horizontalPosition = 0;
+                  });
                 },
-                animation: _animation,
-                child: _getChild(activeColor(), constraint.maxWidth, widget.height!, _onDragLeft ? null : _activeChild),
+                onHorizontalDragUpdate: (details) {
+                  // Update the x-axis position within the constrained area
+                  // Handle horizontal drag to update position (OFF state).
+                  setState(() {
+                    if (!widget.value) {
+                      // _width = context.size?.width ?? _width;
+                      _horizontalPosition += details.primaryDelta! / constraint.maxWidth;
+                      _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
+                      _onDragLeft = _horizontalPosition <= 0 ? false : true;
+                    }
+                  });
+                },
+                onHorizontalDragEnd: (details) {
+                  // Snap the switch to the on/off position when dragging ends
+                  // Handle drag end to snap the switch to the desired position (OFF state).
+                  setState(() {
+                    _onChanged(_horizontalPosition > 0.6);
+                    _onDragLeft = false;
+                  });
+                },
+                child: AnimatedBuilder(
+                  builder: (context, child) {
+                    // Animate the transition of the switch thumb based on drag or tap.
+                    return FractionalTranslation(
+                      translation: Offset(!widget.value ? (_onDragLeft ? _horizontalPosition : 1 - _animation.value) : 0, 0),
+                      child: child,
+                    );
+                  },
+                  animation: _animation,
+                  child: _getChild(
+                    inactiveColor(),
+                    width - (widget.borderWidth! * 2),
+                    widget.height!,
+                    _onDragRight ? null : _inactiveChild,
+                  ),
+                ),
               ),
-            ),
-          ]),
+              // Right side of the switch (ON state).
+              GestureDetector(
+                excludeFromSemantics: true,
+                onTap: () {
+                  // Handle tap to turn ON.
+                  setState(() {
+                    _onChanged(true);
+                    _horizontalPosition = 1;
+                  });
+                },
+                onHorizontalDragUpdate: (details) {
+                  // Update the x-axis position within the constrained area
+                  // Handle horizontal drag to update position (ON state).
+                  setState(() {
+                    if (widget.value) {
+                      // _width = context.size?.width ?? _width;
+                      _horizontalPosition += details.primaryDelta! / constraint.maxWidth;
+                      _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
+                      _onDragRight = _horizontalPosition >= 1 ? false : true;
+                    }
+                  });
+                },
+                onHorizontalDragEnd: (details) {
+                  // Snap the switch to the on/off position when dragging ends
+                  // Handle drag end to snap the switch to the desired position (ON state).
+                  setState(() {
+                    _onChanged(_horizontalPosition > 0.4);
+                    _onDragRight = false;
+                  });
+                },
+                child: AnimatedBuilder(
+                  builder: (context, child) {
+                    // Animate the transition of the switch thumb based on drag or tap.
+                    return FractionalTranslation(
+                      translation: Offset(widget.value ? (_onDragRight ? _horizontalPosition : _animation.value) - 1 : 0, 0),
+                      child: child,
+                    );
+                  },
+                  animation: _animation,
+                  child: _getChild(
+                    activeColor(),
+                    width - (widget.borderWidth! * 2),
+                    widget.height!,
+                    _onDragLeft ? null : _activeChild,
+                  ),
+                ),
+              ),
+            ]),
+          ),
         );
       }),
     );
@@ -685,6 +713,24 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     onChanged!(value);
     _controller.reset();
     _controller.forward().whenComplete(() => _controller.stop());
+  }
+
+  /// Method to fill in the properties of this widget for debugging purposes.
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<bool>('value', widget.value, showName: true, defaultValue: false));
+    properties.add(DoubleProperty('height', widget.height, defaultValue: null));
+    properties.add(DoubleProperty('width', widget.width, defaultValue: null));
+    properties.add(DoubleProperty('borderWidth', widget.borderWidth, defaultValue: null));
+    properties.add(DoubleProperty('borderRadius', widget.borderRadius, defaultValue: null));
+    properties.add(ColorProperty('borderColor', widget.borderColor, defaultValue: null));
+    properties.add(ColorProperty('activeColor', widget.activeColor, defaultValue: null));
+    properties.add(ColorProperty('activeTrackColor', widget.activeTrackColor, defaultValue: null));
+    properties.add(ColorProperty('inactiveTrackColor', widget.inactiveTrackColor, defaultValue: null));
+    properties.add(ColorProperty('inactiveThumbColor', widget.inactiveThumbColor, defaultValue: null));
+    properties.add(ObjectFlagProperty<ValueChanged<bool>>.has('onChanged', widget.onChanged));
+    properties.add(FlagProperty('enableSlide', value: widget.enableSlide, ifTrue: 'slide enabled'));
   }
 }
 
