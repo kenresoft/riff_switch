@@ -10,7 +10,7 @@ enum Type { text, icon, image, color }
 /// A Flutter widget representing a custom switch with advanced features.
 /// RiffSwitch widget allows users to toggle between two states (ON and OFF) with customizable appearance.
 class RiffSwitch extends StatelessWidget {
-  RiffSwitch({
+  const RiffSwitch({
     super.key,
     required this.value,
     required this.onChanged,
@@ -31,7 +31,7 @@ class RiffSwitch extends StatelessWidget {
     this.thumbColor,
     required this.type,
     this.enableSlide = true,
-  }) : assert(height! <= width! / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
+  }) /*assert(height! <= width! / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n')*/;
 
   /// Whether this switch is on or off.
   ///
@@ -174,9 +174,17 @@ class RiffSwitch extends StatelessWidget {
 
   final MaterialStateProperty<Color?>? trackColor;
 
-  /// Type of RiffSwitch, either simple or decorative.
+  /// The type of the RiffSwitch.
+  ///
+  /// Defaults to `Type.text`.
+  ///
+  /// See also:
+  /// * [Type], which contains the set of types available.
   final RiffSwitchType type;
 
+  /// Determines whether the slider is slideable or not.
+  ///
+  /// Defaults to `true`.
   final bool? enableSlide;
 
   /// Returns the appropriate RiffSwitchType based on the specified type.
@@ -491,15 +499,18 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
         // Ensure height is not greater than half of the width
-        assert(widget.height! <= constraint.maxWidth / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: ${widget.height} and width is: ${constraint.maxWidth}\n');
+        if (constraint.maxHeight != double.infinity) {
+          assert(constraint.maxHeight /*widget.height!*/ <= constraint.maxWidth / 2,
+              '\n\nHeight must not be greater than half of the width. \nYour supplied height is: ${constraint.maxHeight /*widget.height*/} and width is: ${constraint.maxWidth}\n');
+        }
         // Calculate the available width for the switch.
         var maxWidth = constraint.maxWidth;
-        var realWidth = widget.width!;
-        double width;
-        width = widget.width == null ? maxWidth : (realWidth > maxWidth ? maxWidth : realWidth);
+        var realWidth = maxWidth /*widget.width!*/;
+        var width = maxWidth /*widget.width == null ? maxWidth : (realWidth > maxWidth ? maxWidth : widget.width!)*/;
+        var height = constraint.maxHeight;
         return Container(
           width: widget.width == null ? width : realWidth,
-          height: widget.height! + (widget.borderWidth! * 2),
+          height: height /*widget.height!*/ + (widget.borderWidth! * 2),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
           ),
@@ -527,7 +538,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     child: _getChild(
                       inactiveColor(),
                       width - (widget.borderWidth! * 2),
-                      widget.height ?? 50,
+                      /*widget.height*/ height ?? 50,
                       _inactiveChild,
                     ),
                   ),
@@ -550,7 +561,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     child: _getChild(
                       activeColor(),
                       width - (widget.borderWidth! * 2),
-                      widget.height ?? 50,
+                      height /*widget.height*/ ?? 50,
                       _activeChild,
                     ),
                   ),
@@ -571,8 +582,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
         assert(widget.height! <= constraint.maxWidth / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: ${widget.height} and width is: ${constraint.maxWidth}\n');
         // Calculate the available width for the switch.
         var maxWidth = constraint.maxWidth;
-        var realWidth = widget.width!;
-        var width = widget.width == null ? maxWidth : (realWidth > maxWidth ? maxWidth : widget.width!);
+        var realWidth = maxWidth /*widget.width!*/;
+        var width = maxWidth /*widget.width == null ? maxWidth : (realWidth > maxWidth ? maxWidth : widget.width!)*/;
         return Container(
           width: widget.width == null ? width : realWidth,
           height: widget.height! + (widget.borderWidth! * 2),
