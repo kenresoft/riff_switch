@@ -173,16 +173,15 @@ More examples from [main.dart](example/lib/main.dart)
   )
 ```
 
-
 ## Screenshots
 
-<img alt="Screenshot 1" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_1.png?raw=true" title="Screenshot 1" width="200"/>
+<img alt="Screenshot 1" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_1.png?raw=true" title="Screenshot 1" width="220"/>
 
-<img alt="Screenshot 2" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_2.png?raw=true" title="Screenshot 2" width="200"/>
+<img alt="Screenshot 2" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_2.png?raw=true" title="Screenshot 2" width="220"/>
 
-<img alt="Screen Record 1" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_1.gif?raw=true" title="Screen Record 1" width="200"/>
+<img alt="Screen Record 1" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_1.gif?raw=true" title="Screen Record 1" width="220"/>
 
-<img alt="Screen Record 2" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_2.gif?raw=true" title="Screen Record 2" width="200"/>
+<img alt="Screen Record 2" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_2.gif?raw=true" title="Screen Record 2" width="220"/>
 
 
 ## Contributing
