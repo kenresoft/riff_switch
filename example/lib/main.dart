@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +52,8 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
 
               // 1
               SizedBox(
-                width: 160,
-                height: 80,
+                width: 50,
+                height: 20,
                 child: Transform.rotate(
                   angle: 0,
                   child: RiffSwitch(
@@ -64,8 +63,9 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                     }),
                     type: RiffSwitchType.simple,
                     enableSlide: false,
-                    height: 80, /// height must not be greater than width/2 (i.e. the max height)
-                    width: 160,
+                    height: 10, /// height must not be greater than width/2 (i.e. the max height)
+                    width: 800,
+                    borderRadius: 2,
                   ),
                 ),
               ),
