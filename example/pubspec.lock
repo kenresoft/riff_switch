@@ -49,6 +49,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  extensionresoft:
+    dependency: transitive
+    description:
+      name: extensionresoft
+      sha256: "71fba024c86f96f187752aabc79e6a2abbd3895d1e9f1a06974db8a326746412"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   fake_async:
     dependency: transitive
     description:
@@ -192,5 +200,5 @@ packages:
     source: hosted
     version: "0.3.0"
 sdks:
-  dart: ">=3.2.0-194.0.dev <4.0.0"
-  flutter: ">=1.17.0"
+  dart: ">=3.2.3 <4.0.0"
+  flutter: ">=3.16.5"
