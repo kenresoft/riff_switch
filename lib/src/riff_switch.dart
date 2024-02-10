@@ -22,6 +22,9 @@ class RiffSwitch extends StatelessWidget {
     this.borderWidth = 0,
     this.borderRadius = 25,
     this.borderColor = Colors.blue,
+    this.thumbMargin,
+    this.elevation,
+    this.animateToggle = false,
     this.activeTrackColor,
     this.activeText = const Text('ON'),
     this.inactiveText = const Text('OFF'),
@@ -90,6 +93,10 @@ class RiffSwitch extends StatelessWidget {
   ///
   /// If not provided, the switch will have no border color.
   final Color? borderColor;
+
+  final double? thumbMargin;
+  final double? elevation;
+  final bool? animateToggle;
 
   /// The color to use when this switch is on.
   ///
