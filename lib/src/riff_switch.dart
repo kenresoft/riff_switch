@@ -22,8 +22,8 @@ class RiffSwitch extends StatelessWidget {
     this.borderWidth = 0,
     this.borderRadius = 25,
     this.borderColor = Colors.blue,
-    this.thumbMargin,
-    this.elevation,
+    this.thumbMargin = 0,
+    this.elevation = 0,
     this.animateToggle = false,
     this.activeTrackColor,
     this.activeText = const Text('ON'),
@@ -246,6 +246,9 @@ class RiffSwitch extends StatelessWidget {
       borderWidth: borderWidth,
       borderRadius: borderRadius,
       borderColor: borderColor,
+      thumbMargin: thumbMargin,
+      elevation: elevation,
+      animateToggle: animateToggle,
       activeTrackColor: activeTrackColor,
       activeChild: activeChild,
       inactiveChild: inactiveChild,
@@ -278,6 +281,9 @@ class _SimpleSwitch extends StatefulWidget {
   })  : borderWidth = 0,
         borderRadius = 25,
         borderColor = Colors.blue,
+        thumbMargin = 0,
+        animateToggle = false,
+        elevation = 0,
         activeChild = null,
         inactiveChild = null,
         type = RiffSwitchType.simple;
@@ -291,6 +297,9 @@ class _SimpleSwitch extends StatefulWidget {
     this.borderWidth = 3,
     this.borderRadius = 25,
     this.borderColor = Colors.blue,
+    this.thumbMargin = 0,
+    this.elevation = 0,
+    this.animateToggle = false,
     this.trackColor,
     this.thumbColor,
     this.activeColor,
@@ -311,6 +320,9 @@ class _SimpleSwitch extends StatefulWidget {
   final double? borderWidth;
   final double? borderRadius;
   final Color? borderColor;
+  final double? thumbMargin;
+  final double? elevation;
+  final bool? animateToggle;
   final Color? activeColor;
   final Color? activeTrackColor;
   final Color? inactiveThumbColor;
@@ -583,10 +595,15 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
         // Calculate the available width for the switch.
         var width = widget.width!;
         width = condition(width > constraint.maxWidth, constraint.maxWidth, width);
+
         // Calculate the available height for the switch.
         var height = widget.height!;
+
         var borderWidth = widget.borderWidth!;
         borderWidth = condition(borderWidth > height / 2, height / 3, borderWidth);
+
+        var thumbMargin = widget.thumbMargin!;
+
         // Ensure height is not greater than half of the width
         if (height != double.infinity) {
           assert(height <= width / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
@@ -602,8 +619,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
               borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
             ),
             child: Container(
-              height: height - (borderWidth * 2) - 6,
-              width: width - (borderWidth * 2) - 6,
+              height: height - (thumbMargin * 2) - (borderWidth * 2),
+              width: width - (thumbMargin * 2) - (borderWidth * 2),
               decoration: BoxDecoration(
                 color: getTrackColor(),
                 border: Border.all(width: 3, color: getTrackColor()!),
@@ -657,8 +674,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     animation: _animation,
                     child: _getChild(
                       inactiveColor(),
-                      width - (borderWidth * 2) - 6,
-                      height - (borderWidth * 2) - 6,
+                      width - (thumbMargin * 2) - (borderWidth * 2),
+                      height - (thumbMargin * 2) - (borderWidth * 2),
                       /*width - (widget.borderWidth! * 2),
                       height - (widget.borderWidth! * 2),*/
                       _onDragRight ? null : _inactiveChild,
@@ -712,8 +729,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     animation: _animation,
                     child: _getChild(
                       activeColor(),
-                      width - (borderWidth * 2) - 6,
-                      height - (borderWidth * 2) - 6,
+                      width - (thumbMargin * 2) - (borderWidth * 2),
+                      height - (thumbMargin * 2) - (borderWidth * 2),
                       _onDragLeft ? null : _activeChild,
                     ),
                   ),

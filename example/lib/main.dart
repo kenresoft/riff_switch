@@ -180,6 +180,7 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                   width: 1000,
                   borderWidth: 0,
                   borderRadius: 150,
+                  thumbMargin: 10,
                 ),
               ),
 
