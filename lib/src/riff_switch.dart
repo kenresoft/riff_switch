@@ -1,3 +1,6 @@
+library;
+
+import 'package:extensionresoft/extensionresoft.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -333,7 +336,6 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     _tween = Tween(begin: 0.9, end: 1.0);
     _animation = CurvedAnimation(parent: _tween.animate(_controller), curve: Curves.easeOutBack);
     _controller.forward(from: 1.0);
-    //_width = widget.width!;
     super.initState();
   }
 
@@ -479,96 +481,89 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
       }
     }
 
-    if (widget.enableSlide!) {
-      return buildSlidableSwitch(
+    return condition(
+      widget.enableSlide!,
+      buildSlidableSwitch(
         getTrackColor,
         inactiveColor,
         activeColor,
-      );
-    } else {
-      return buildNonSlidableSwitch(
+      ),
+      buildNonSlidableSwitch(
         getTrackColor,
         inactiveColor,
         activeColor,
-      );
-    }
+      ),
+    );
   }
 
   Semantics buildNonSlidableSwitch(Color? Function() getTrackColor, Color Function() inactiveColor, Color Function() activeColor) {
     return Semantics(
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
-        // Ensure height is not greater than half of the width
-        if (constraint.maxHeight != double.infinity) {
-          assert(constraint.maxHeight /*widget.height!*/ <= constraint.maxWidth / 2,
-              '\n\nHeight must not be greater than half of the width. \nYour supplied height is: ${constraint.maxHeight /*widget.height*/} and width is: ${constraint.maxWidth}\n');
-        }
         // Calculate the available width for the switch.
-        var maxWidth = constraint.maxWidth;
-        var realWidth = maxWidth /*widget.width!*/;
-        var width = maxWidth /*widget.width == null ? maxWidth : (realWidth > maxWidth ? maxWidth : widget.width!)*/;
+        var width = constraint.maxWidth;
+        // Calculate the available height for the switch.
         var height = constraint.maxHeight;
+        // Ensure height is not greater than half of the width
+        if (height != double.infinity) {
+          assert(height <= width / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
+        }
         return Container(
-          width: widget.width == null ? width : realWidth,
-          height: height /*widget.height!*/ + (widget.borderWidth! * 2),
+          width: width,
+          height: height,
           decoration: BoxDecoration(
+            color: getTrackColor(),
             borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
           ),
-          child: Container(
-            //padding: const EdgeInsets.symmetric(horizontal: 5),
-            width: width - (widget.borderWidth! * 2),
-            decoration: BoxDecoration(
-              color: getTrackColor(),
-              borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
-            ),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              AnimatedBuilder(
-                builder: (context, child) {
-                  return FractionalTranslation(
-                    translation: Offset(!value! ? 1 - _animation.value : 0, 0),
-                    child: child,
-                  );
-                },
-                animation: _animation,
-                child: FractionalTranslation(
-                  translation: Offset(_horizontalPosition, 0),
-                  child: GestureDetector(
-                    excludeFromSemantics: true,
-                    onTap: () => _onChanged(false),
-                    child: _getChild(
-                      inactiveColor(),
-                      width - (widget.borderWidth! * 2),
-                      /*widget.height*/ height ?? 50,
-                      _inactiveChild,
-                    ),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            AnimatedBuilder(
+              builder: (context, child) {
+                return FractionalTranslation(
+                  translation: Offset(!value! ? 1 - _animation.value : 0, 0),
+                  child: child,
+                );
+              },
+              animation: _animation,
+              child: FractionalTranslation(
+                translation: Offset(_horizontalPosition, 0),
+                child: GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () => _onChanged(false),
+                  child: _getChild(
+                    inactiveColor(),
+                    width - (widget.borderWidth! * 2),
+                    height - (widget.borderWidth! * 2),
+                    _inactiveChild,
                   ),
                 ),
-                //),
               ),
-              AnimatedBuilder(
-                builder: (context, child) {
-                  return FractionalTranslation(
-                    translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
-                    child: child,
-                  );
-                },
-                animation: _animation,
-                child: FractionalTranslation(
-                  translation: Offset(_horizontalPosition, 0),
-                  child: GestureDetector(
-                    excludeFromSemantics: true,
-                    onTap: () => _onChanged(true),
-                    child: _getChild(
-                      activeColor(),
-                      width - (widget.borderWidth! * 2),
-                      height /*widget.height*/ ?? 50,
-                      _activeChild,
-                    ),
+              //),
+            ),
+            AnimatedBuilder(
+              builder: (context, child) {
+                return FractionalTranslation(
+                  translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
+                  child: child,
+                );
+              },
+              animation: _animation,
+              child: FractionalTranslation(
+                translation: Offset(_horizontalPosition, 0),
+                child: GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () => _onChanged(true),
+                  child: _getChild(
+                    activeColor(),
+                    width - (widget.borderWidth! * 2),
+                    widget.height!,
+                    /*width - (widget.borderWidth! * 2),
+                    height - (widget.borderWidth! * 2),*/
+                    _activeChild,
                   ),
                 ),
-              )
-            ]),
-          ),
+              ),
+            )
+          ]),
         );
       }),
     );
@@ -578,121 +573,146 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     return Semantics(
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
-        // Ensure height is not greater than half of the width
-        assert(widget.height! <= constraint.maxWidth / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: ${widget.height} and width is: ${constraint.maxWidth}\n');
         // Calculate the available width for the switch.
-        var maxWidth = constraint.maxWidth;
-        var realWidth = maxWidth /*widget.width!*/;
-        var width = maxWidth /*widget.width == null ? maxWidth : (realWidth > maxWidth ? maxWidth : widget.width!)*/;
-        return Container(
-          width: widget.width == null ? width : realWidth,
-          height: widget.height! + (widget.borderWidth! * 2),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
-          ),
+        var width = widget.width!;
+        width = condition(width > constraint.maxWidth, constraint.maxWidth, width);
+        // Calculate the available height for the switch.
+        var height = widget.height!;
+        var borderWidth = widget.borderWidth!;
+        borderWidth = condition(borderWidth > height / 2, height / 3, borderWidth);
+        // Ensure height is not greater than half of the width
+        if (height != double.infinity) {
+          assert(height <= width / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
+        }
+
+        debugPrint(width.toString());
+        return UnconstrainedBox(
           child: Container(
-            //padding: const EdgeInsets.symmetric(horizontal: 5),
-            width: width - (widget.borderWidth! * 2),
+            width: width,
+            height: height,
             decoration: BoxDecoration(
-              color: getTrackColor(),
+              // border: Border.all(width: 3, color: Colors.green),
               borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
             ),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              // Left side of the switch (OFF state).
-              GestureDetector(
-                excludeFromSemantics: true,
-                onTap: () {
-                  // Handle tap to turn OFF.
-                  setState(() {
-                    _onChanged(false);
-                    _horizontalPosition = 0;
-                  });
-                },
-                onHorizontalDragUpdate: (details) {
-                  // Update the x-axis position within the constrained area
-                  // Handle horizontal drag to update position (OFF state).
-                  setState(() {
-                    if (!widget.value) {
-                      // _width = context.size?.width ?? _width;
-                      _horizontalPosition += details.primaryDelta! / constraint.maxWidth;
-                      _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
-                      _onDragLeft = _horizontalPosition <= 0 ? false : true;
-                    }
-                  });
-                },
-                onHorizontalDragEnd: (details) {
-                  // Snap the switch to the on/off position when dragging ends
-                  // Handle drag end to snap the switch to the desired position (OFF state).
-                  setState(() {
-                    _onChanged(_horizontalPosition > 0.6);
-                    _onDragLeft = false;
-                  });
-                },
-                child: AnimatedBuilder(
-                  builder: (context, child) {
-                    // Animate the transition of the switch thumb based on drag or tap.
-                    return FractionalTranslation(
-                      translation: Offset(!widget.value ? (_onDragLeft ? _horizontalPosition : 1 - _animation.value) : 0, 0),
-                      child: child,
-                    );
+            child: Container(
+              height: height - (borderWidth * 2) - 6,
+              width: width - (borderWidth * 2) - 6,
+              decoration: BoxDecoration(
+                color: getTrackColor(),
+                border: Border.all(width: 3, color: getTrackColor()!),
+                borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
+              ),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                // Left side of the switch (OFF state).
+                GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () {
+                    // Handle tap to turn OFF.
+                    setState(() {
+                      _onChanged(false);
+                      _horizontalPosition = 0;
+                    });
                   },
-                  animation: _animation,
-                  child: _getChild(
-                    inactiveColor(),
-                    width - (widget.borderWidth! * 2),
-                    widget.height!,
-                    _onDragRight ? null : _inactiveChild,
+                  onHorizontalDragUpdate: (details) {
+                    // Update the x-axis position within the constrained area
+                    // Handle horizontal drag to update position (OFF state).
+                    setState(() {
+                      if (!widget.value) {
+                        //width = context.size?.width ?? width;
+                        _horizontalPosition += details.primaryDelta! / width;
+                        _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
+                        _onDragLeft = _horizontalPosition <= 0 ? false : true;
+                      }
+                    });
+                  },
+                  onHorizontalDragEnd: (details) {
+                    // Snap the switch to the on/off position when dragging ends
+                    // Handle drag end to snap the switch to the desired position (OFF state).
+                    setState(() {
+                      _onChanged(_horizontalPosition > 0.6);
+                      _onDragLeft = false;
+                    });
+                  },
+                  child: AnimatedBuilder(
+                    builder: (context, child) {
+                      // Animate the transition of the switch thumb based on drag or tap.
+                      return FractionalTranslation(
+                        translation: Offset(
+                            condition(
+                              !widget.value,
+                              (_onDragLeft ? _horizontalPosition : 1 - _animation.value),
+                              0,
+                            ),
+                            0),
+                        child: child,
+                      );
+                    },
+                    animation: _animation,
+                    child: _getChild(
+                      inactiveColor(),
+                      width - (borderWidth * 2) - 6,
+                      height - (borderWidth * 2) - 6,
+                      /*width - (widget.borderWidth! * 2),
+                      height - (widget.borderWidth! * 2),*/
+                      _onDragRight ? null : _inactiveChild,
+                    ),
                   ),
                 ),
-              ),
-              // Right side of the switch (ON state).
-              GestureDetector(
-                excludeFromSemantics: true,
-                onTap: () {
-                  // Handle tap to turn ON.
-                  setState(() {
-                    _onChanged(true);
-                    _horizontalPosition = 1;
-                  });
-                },
-                onHorizontalDragUpdate: (details) {
-                  // Update the x-axis position within the constrained area
-                  // Handle horizontal drag to update position (ON state).
-                  setState(() {
-                    if (widget.value) {
-                      // _width = context.size?.width ?? _width;
-                      _horizontalPosition += details.primaryDelta! / constraint.maxWidth;
-                      _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
-                      _onDragRight = _horizontalPosition >= 1 ? false : true;
-                    }
-                  });
-                },
-                onHorizontalDragEnd: (details) {
-                  // Snap the switch to the on/off position when dragging ends
-                  // Handle drag end to snap the switch to the desired position (ON state).
-                  setState(() {
-                    _onChanged(_horizontalPosition > 0.4);
-                    _onDragRight = false;
-                  });
-                },
-                child: AnimatedBuilder(
-                  builder: (context, child) {
-                    // Animate the transition of the switch thumb based on drag or tap.
-                    return FractionalTranslation(
-                      translation: Offset(widget.value ? (_onDragRight ? _horizontalPosition : _animation.value) - 1 : 0, 0),
-                      child: child,
-                    );
+                // Right side of the switch (ON state).
+                GestureDetector(
+                  excludeFromSemantics: true,
+                  onTap: () {
+                    // Handle tap to turn ON.
+                    setState(() {
+                      _onChanged(true);
+                      _horizontalPosition = 1;
+                    });
                   },
-                  animation: _animation,
-                  child: _getChild(
-                    activeColor(),
-                    width - (widget.borderWidth! * 2),
-                    widget.height!,
-                    _onDragLeft ? null : _activeChild,
+                  onHorizontalDragUpdate: (details) {
+                    // Update the x-axis position within the constrained area
+                    // Handle horizontal drag to update position (ON state).
+                    setState(() {
+                      if (widget.value) {
+                        //width = context.size?.width ?? width;
+                        _horizontalPosition += details.primaryDelta! / width;
+                        _horizontalPosition = _horizontalPosition.clamp(0.0, 1.0);
+                        _onDragRight = _horizontalPosition >= 1 ? false : true;
+                      }
+                    });
+                  },
+                  onHorizontalDragEnd: (details) {
+                    // Snap the switch to the on/off position when dragging ends
+                    // Handle drag end to snap the switch to the desired position (ON state).
+                    setState(() {
+                      _onChanged(_horizontalPosition > 0.4);
+                      _onDragRight = false;
+                    });
+                  },
+                  child: AnimatedBuilder(
+                    builder: (context, child) {
+                      // Animate the transition of the switch thumb based on drag or tap.
+                      return FractionalTranslation(
+                        translation: Offset(
+                            condition(
+                              widget.value,
+                              (_onDragRight ? _horizontalPosition : _animation.value) - 1,
+                              0,
+                            ),
+                            0),
+                        child: child,
+                      );
+                    },
+                    animation: _animation,
+                    child: _getChild(
+                      activeColor(),
+                      width - (borderWidth * 2) - 6,
+                      height - (borderWidth * 2) - 6,
+                      _onDragLeft ? null : _activeChild,
+                    ),
                   ),
                 ),
-              ),
-            ]),
+              ]),
+            ),
           ),
         );
       }),
