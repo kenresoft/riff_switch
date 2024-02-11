@@ -178,9 +178,10 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                   activeColor: Colors.orange,
                   height: 166,
                   width: 1000,
-                  borderWidth: 0,
-                  borderRadius: 150,
-                  thumbMargin: 10,
+                  borderWidth: 50000,
+                  borderColor: Colors.red,
+                  borderRadius: 1500,
+                  thumbMargin: 10000,
                 ),
               ),
 
@@ -206,7 +207,8 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                   ),
                   height: 60,
                   width: 120,
-                  borderWidth: 5,
+                  borderWidth: 5000,
+                  thumbMargin: 500,
                   borderRadius: 5,
                 ),
               )

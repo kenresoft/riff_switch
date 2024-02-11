@@ -600,9 +600,12 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
         var height = widget.height!;
 
         var borderWidth = widget.borderWidth!;
-        borderWidth = condition(borderWidth > height / 2, height / 3, borderWidth);
+        borderWidth = condition(borderWidth > 5, 5, borderWidth);
 
         var thumbMargin = widget.thumbMargin!;
+        thumbMargin = condition(thumbMargin > (5 + height / 2), height / 8, thumbMargin);
+
+        var borderColor = widget.borderColor!;
 
         // Ensure height is not greater than half of the width
         if (height != double.infinity) {
@@ -615,15 +618,16 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
             width: width,
             height: height,
             decoration: BoxDecoration(
-              // border: Border.all(width: 3, color: Colors.green),
+              color: borderColor,
+              border: Border.all(width: borderWidth, color: borderColor),
               borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
             ),
             child: Container(
-              height: height - (thumbMargin * 2) - (borderWidth * 2),
               width: width - (thumbMargin * 2) - (borderWidth * 2),
+              height: height - (thumbMargin * 2) - (borderWidth * 2),
               decoration: BoxDecoration(
                 color: getTrackColor(),
-                border: Border.all(width: 3, color: getTrackColor()!),
+                //border: Border.all(width: borderWidth, color: borderColor),
                 borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
               ),
               child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
