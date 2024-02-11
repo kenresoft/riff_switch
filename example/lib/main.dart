@@ -52,54 +52,44 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
               // 1
               Row(
                 children: [
-                  SizedBox(
-                    width: 200,
-                    child: Switch(
+                  Switch(
+                    value: _switchValue_1,
+                    onChanged: (value) => setState(() {}),
+                  ),
+                  Transform.rotate(
+                    angle: 0,
+                    child: RiffSwitch(
                       value: _switchValue_1,
-                      onChanged: (value) => setState(() {}),
+                      onChanged: (value) => setState(() {
+                        _switchValue_1 = value;
+                      }),
+                      type: RiffSwitchType.decorative,
+                      enableSlide: false,
+                      height: 25,
+
+                      /// height must not be greater than width/2 (i.e. the max height)
+                      width: 50,
+                      borderRadius: 200,
+                      //borderWidth: 3,
                     ),
                   ),
-                  SizedBox(
-                    width: 60,
-                    height: 30,
-                    child: Transform.rotate(
-                      angle: 0,
-                      child: RiffSwitch(
-                        value: _switchValue_1,
-                        onChanged: (value) => setState(() {
-                          _switchValue_1 = value;
-                        }),
-                        type: RiffSwitchType.decorative,
-                        enableSlide: false,
-                        height: 10,
+                  const SizedBox(width: 5),
+                  Transform.rotate(
+                    angle: 0,
+                    child: RiffSwitch(
+                      value: _switchValue_1,
+                      onChanged: (value) => setState(() {
+                        _switchValue_1 = value;
+                      }),
+                      type: RiffSwitchType.simple,
+                      enableSlide: false,
+                      height: 30,
 
-                        /// height must not be greater than width/2 (i.e. the max height)
-                        //width: 800,
-                        borderRadius: 20,
-                        borderWidth: 3,
-                      ),
+                      /// height must not be greater than width/2 (i.e. the max height)
+                      width: 80,
+                      borderRadius: 2,
                     ),
-                  )
-                  /*SizedBox(
-                    width: 100,
-                    height: 50,
-                    child: Transform.rotate(
-                      angle: 0,
-                      child: RiffSwitch(
-                        value: _switchValue_1,
-                        onChanged: (value) => setState(() {
-                          _switchValue_1 = value;
-                        }),
-                        type: RiffSwitchType.simple,
-                        enableSlide: false,
-                        height: 10,
-
-                        /// height must not be greater than width/2 (i.e. the max height)
-                        width: 800,
-                        borderRadius: 2,
-                      ),
-                    ),
-                  )*/,
+                  ),
                 ],
               ),
 
@@ -135,62 +125,54 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
               const SizedBox(height: 30),
 
               // 2
-              SizedBox(
-                width: 160,
-                height: 30,
-                child: RiffSwitch(
-                  value: _switchValue_2,
-                  onChanged: (value) => setState(() {
-                    _switchValue_2 = value;
-                  }),
-                  type: RiffSwitchType.decorative,
-                  activeText: const Text("Accept"),
-                  inactiveText: const Text("Decline"),
-                  thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                    if (states.contains(MaterialState.selected)) {
-                      return Colors.greenAccent;
-                    }
-                    return Colors.pinkAccent;
-                  }),
-                  trackColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                    if (states.contains(MaterialState.selected)) {
-                      return Colors.grey;
-                    }
+              RiffSwitch(
+                value: _switchValue_2,
+                onChanged: (value) => setState(() {
+                  _switchValue_2 = value;
+                }),
+                type: RiffSwitchType.decorative,
+                activeText: const Text("Accept"),
+                inactiveText: const Text("Decline"),
+                thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return Colors.greenAccent;
+                  }
+                  return Colors.pinkAccent;
+                }),
+                trackColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
                     return Colors.grey;
-                  }),
-                  //height: 80,
-                  //width: double.infinity,
-                ),
+                  }
+                  return Colors.grey;
+                }),
+                height: 40,
+                width: double.infinity,
               ),
 
               const SizedBox(height: 30),
 
               // 3
-              SizedBox(
-                //width: 160,
-                //height: 100,
-                child: RiffSwitch(
-                  value: _switchValue_3,
-                  onChanged: (value) => setState(() {
-                    _switchValue_3 = value;
-                  }),
-                  type: RiffSwitchType.decorative,
-                  activeColor: Colors.orange,
-                  height: 166,
-                  width: 1000,
-                  borderWidth: 50000,
-                  borderColor: Colors.red,
-                  borderRadius: 1500,
-                  thumbMargin: 10000,
-                ),
+              RiffSwitch(
+                value: _switchValue_3,
+                onChanged: (value) => setState(() {
+                  _switchValue_3 = value;
+                }),
+                type: RiffSwitchType.decorative,
+                activeColor: Colors.orange,
+                height: 166,
+                width: 1000,
+                borderWidth: 50000,
+                borderColor: Colors.red,
+                borderRadius: 1500,
+                thumbMargin: 10000,
               ),
 
               const SizedBox(height: 30),
 
               // 4
               SizedBox(
-                //width: 160,
-                //height: 30,
+                width: 160,
+                height: 160,
                 child: RiffSwitch(
                   value: _switchValue_4,
                   onChanged: (value) => setState(() {

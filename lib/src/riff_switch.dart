@@ -520,69 +520,91 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
       toggled: widget.value,
       child: LayoutBuilder(builder: (context, constraint) {
         // Calculate the available width for the switch.
-        var width = constraint.maxWidth;
+        var width = widget.width!;
+        width = condition(width > constraint.maxWidth, constraint.maxWidth, width);
+
         // Calculate the available height for the switch.
-        var height = constraint.maxHeight;
+        var height = widget.height!;
+
+        var borderWidth = widget.borderWidth!;
+        borderWidth = condition(borderWidth > 5, 5, borderWidth);
+
+        var thumbMargin = widget.thumbMargin!;
+        thumbMargin = condition(thumbMargin > (5 + height / 2), height / 8, thumbMargin);
+
+        var borderColor = widget.borderColor!;
+
         // Ensure height is not greater than half of the width
         if (height != double.infinity) {
-          assert(height <= width / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
+          //assert(height <= width / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
         }
-        return Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: getTrackColor(),
-            borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
-          ),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            AnimatedBuilder(
-              builder: (context, child) {
-                return FractionalTranslation(
-                  translation: Offset(!value! ? 1 - _animation.value : 0, 0),
-                  child: child,
-                );
-              },
-              animation: _animation,
-              child: FractionalTranslation(
-                translation: Offset(_horizontalPosition, 0),
-                child: GestureDetector(
-                  excludeFromSemantics: true,
-                  onTap: () => _onChanged(false),
-                  child: _getChild(
-                    inactiveColor(),
-                    width - (widget.borderWidth! * 2),
-                    height - (widget.borderWidth! * 2),
-                    _inactiveChild,
-                  ),
-                ),
-              ),
-              //),
+
+        return UnconstrainedBox(
+          child: Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: borderColor,
+              border: Border.all(width: borderWidth, color: borderColor),
+              borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
             ),
-            AnimatedBuilder(
-              builder: (context, child) {
-                return FractionalTranslation(
-                  translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
-                  child: child,
-                );
-              },
-              animation: _animation,
-              child: FractionalTranslation(
-                translation: Offset(_horizontalPosition, 0),
-                child: GestureDetector(
-                  excludeFromSemantics: true,
-                  onTap: () => _onChanged(true),
-                  child: _getChild(
-                    activeColor(),
-                    width - (widget.borderWidth! * 2),
-                    widget.height!,
-                    /*width - (widget.borderWidth! * 2),
-                    height - (widget.borderWidth! * 2),*/
-                    _activeChild,
-                  ),
-                ),
+            child: Container(
+              width: width - (thumbMargin * 2) - (borderWidth * 2),
+              height: height - (thumbMargin * 2) - (borderWidth * 2),
+              decoration: BoxDecoration(
+                color: getTrackColor(),
+                //border: Border.all(width: borderWidth, color: borderColor),
+                borderRadius: BorderRadius.circular(widget.borderRadius ?? 25),
               ),
-            )
-          ]),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                AnimatedBuilder(
+                  builder: (context, child) {
+                    return FractionalTranslation(
+                      translation: Offset(!value! ? 1 - _animation.value : 0, 0),
+                      child: child,
+                    );
+                  },
+                  animation: _animation,
+                  child: FractionalTranslation(
+                    translation: Offset(_horizontalPosition, 0),
+                    child: GestureDetector(
+                      excludeFromSemantics: true,
+                      onTap: () => _onChanged(false),
+                      child: _getChild(
+                        inactiveColor(),
+                        width - (thumbMargin * 2) - (borderWidth * 2),
+                        height - (thumbMargin * 2) - (borderWidth * 2),
+                        _inactiveChild,
+                      ),
+                    ),
+                  ),
+                  //),
+                ),
+                AnimatedBuilder(
+                  builder: (context, child) {
+                    return FractionalTranslation(
+                      translation: Offset(widget.value ? _animation.value - 1 : 0, 0),
+                      child: child,
+                    );
+                  },
+                  animation: _animation,
+                  child: FractionalTranslation(
+                    translation: Offset(_horizontalPosition, 0),
+                    child: GestureDetector(
+                      excludeFromSemantics: true,
+                      onTap: () => _onChanged(true),
+                      child: _getChild(
+                        activeColor(),
+                        width - (thumbMargin * 2) - (borderWidth * 2),
+                        height - (thumbMargin * 2) - (borderWidth * 2),
+                        _activeChild,
+                      ),
+                    ),
+                  ),
+                )
+              ]),
+            ),
+          ),
         );
       }),
     );
