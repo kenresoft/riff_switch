@@ -536,7 +536,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
 
         // Ensure height is not greater than half of the width
         if (height != double.infinity) {
-          //assert(height <= width / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
+          assert(height <= width / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
         }
 
         return UnconstrainedBox(
@@ -571,10 +571,11 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                       excludeFromSemantics: true,
                       onTap: () => _onChanged(false),
                       child: _getChild(
+                        value,
                         inactiveColor(),
                         width - (thumbMargin * 2) - (borderWidth * 2),
                         height - (thumbMargin * 2) - (borderWidth * 2),
-                        _inactiveChild,
+                        RiffSwitchChild(isActiveChild: false, child: _inactiveChild),
                       ),
                     ),
                   ),
@@ -594,10 +595,11 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                       excludeFromSemantics: true,
                       onTap: () => _onChanged(true),
                       child: _getChild(
+                        value,
                         activeColor(),
                         width - (thumbMargin * 2) - (borderWidth * 2),
                         height - (thumbMargin * 2) - (borderWidth * 2),
-                        _activeChild,
+                        RiffSwitchChild(isActiveChild: true, child: _activeChild),
                       ),
                     ),
                   ),
@@ -699,12 +701,11 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     },
                     animation: _animation,
                     child: _getChild(
+                      value,
                       inactiveColor(),
                       width - (thumbMargin * 2) - (borderWidth * 2),
                       height - (thumbMargin * 2) - (borderWidth * 2),
-                      /*width - (widget.borderWidth! * 2),
-                      height - (widget.borderWidth! * 2),*/
-                      _onDragRight ? null : _inactiveChild,
+                      _onDragRight ? null : RiffSwitchChild(isActiveChild: false, child: _inactiveChild),
                     ),
                   ),
                 ),
@@ -754,10 +755,11 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     },
                     animation: _animation,
                     child: _getChild(
+                      value,
                       activeColor(),
                       width - (thumbMargin * 2) - (borderWidth * 2),
                       height - (thumbMargin * 2) - (borderWidth * 2),
-                      _onDragLeft ? null : _activeChild,
+                      _onDragLeft ? null : RiffSwitchChild(isActiveChild: true, child: _activeChild),
                     ),
                   ),
                 ),
@@ -770,23 +772,40 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   }
 
   Widget get _activeChild {
-    return widget.type == RiffSwitchType.simple ? widget.activeText! : widget.activeChild!;
+    return widget.type == RiffSwitchType.simple ? widget.activeText! : RiffSwitchChild(isActiveChild: true, child: widget.activeChild!);
   }
 
   Widget get _inactiveChild {
-    return widget.type == RiffSwitchType.simple ? widget.inactiveText! : widget.inactiveChild!;
+    return widget.type == RiffSwitchType.simple ? widget.inactiveText! : RiffSwitchChild(isActiveChild: true, child: widget.inactiveChild!);
   }
 
-  Widget _getChild(Color color, double width, double height, Widget? child) {
+  Widget _getChild(bool? value, Color color, double width, double height, RiffSwitchChild? riffSwitchChild) {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.horizontal(left: Radius.circular(widget.borderRadius ?? 25), right: Radius.circular(widget.borderRadius!)),
+        borderRadius: BorderRadius.circular(widget.borderRadius!),
+        //borderRadius: BorderRadius.horizontal(left: Radius.circular(widget.borderRadius ?? 25), right: Radius.circular(widget.borderRadius!),),
       ),
       width: width / 2,
       height: height,
-      child: Material(color: Colors.transparent, child: child),
+      child: Material(
+        color: Colors.transparent,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(widget.borderRadius!),
+          child: ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              condition(
+                riffSwitchChild!.isActiveChild && value!,
+                color,
+                condition(riffSwitchChild.isActiveChild && value!, color, Colors.grey),
+              ),
+              BlendMode.color,
+            ),
+            child: riffSwitchChild.child,
+          ),
+        ),
+      ),
     );
   }
 
@@ -812,6 +831,18 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     properties.add(ColorProperty('inactiveThumbColor', widget.inactiveThumbColor, defaultValue: null));
     properties.add(ObjectFlagProperty<ValueChanged<bool>>.has('onChanged', widget.onChanged));
     properties.add(FlagProperty('enableSlide', value: widget.enableSlide, ifTrue: 'slide enabled'));
+  }
+}
+
+class RiffSwitchChild extends StatelessWidget {
+  const RiffSwitchChild({super.key, required this.isActiveChild, required this.child});
+
+  final bool isActiveChild;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return child;
   }
 }
 

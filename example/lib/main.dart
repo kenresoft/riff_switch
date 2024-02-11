@@ -189,10 +189,41 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                   ),
                   height: 60,
                   width: 120,
-                  borderWidth: 5000,
-                  thumbMargin: 500,
-                  borderRadius: 5,
+                  borderWidth: 1,
+                  thumbMargin: 5,
+                  borderRadius: 50,
                 ),
+              ),
+
+              RiffSwitch(
+                value: _switchValue_4,
+                onChanged: (value) => setState(() {
+                  _switchValue_4 = value;
+                }),
+                type: RiffSwitchType.decorative,
+                activeChild: Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  color: CupertinoColors.systemBlue,
+                  child: FlutterLogo(),
+                ),
+                inactiveChild: Container(
+                  color: Colors.pink,
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: FlutterLogo(),
+                ),
+                thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return Colors.greenAccent;
+                  }
+                  return Colors.yellow;
+                }),
+                height: 60,
+                width: 120,
+                borderWidth: 1,
+                thumbMargin: 5,
+                borderRadius: 50,
               )
             ]),
           ),
