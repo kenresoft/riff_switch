@@ -50,7 +50,7 @@ packages:
     source: hosted
     version: "1.0.6"
   extensionresoft:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: extensionresoft
       sha256: "71fba024c86f96f187752aabc79e6a2abbd3895d1e9f1a06974db8a326746412"
@@ -129,7 +129,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.4"
   sky_engine:
     dependency: transitive
     description: flutter
