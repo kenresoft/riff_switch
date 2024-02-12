@@ -180,23 +180,6 @@ ensuring a cohesive visual appearance throughout the application.
 
 ## Screenshots
 
-<img alt="Screenshot 1" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_1.png?raw=true" title="Screenshot 1" width="220"/>
-
-<img alt="Screenshot 2" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_2.png?raw=true" title="Screenshot 2" width="220"/>
-
-<img alt="Screenshot 3" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_3.png?raw=true" title="Screenshot 3" width="220"/>
-
-<img alt="Screenshot 4" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_4.png?raw=true" title="Screenshot 4" width="220"/>
-
-<img alt="Screenshot 5" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_5.png?raw=true" title="Screenshot 5" width="220"/>
-
-<img alt="Screenshot 6" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_6.png?raw=true" title="Screenshot 6" width="220"/>
-
-<img alt="Screen Record 1" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_1.gif?raw=true" title="Screen Record 1" width="220"/>
-
-<img alt="Screen Record 2" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_2.gif?raw=true" title="Screen Record 2" width="220"/>
-
-
 | Screenshot 1                                                                                                | Screenshot 2                                                                                                | Screenshot 3                                                                                                |
 |-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
 | ![Screenshot 1](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_1.png?raw=true) | ![Screenshot 2](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_2.png?raw=true) | ![Screenshot 3](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_3.png?raw=true) |
@@ -212,6 +195,14 @@ ensuring a cohesive visual appearance throughout the application.
 
 ## Contributing
 Contributions are welcome! Feel free to open issues or submit pull requests.
+
+- **Issues**: If you encounter any bugs, have feature requests, or want to suggest improvements, please open an issue on our GitHub repository. Provide as much detail as possible to help us understand the problem or idea better.
+
+- **Pull Requests**: If you'd like to contribute code changes, feel free to submit a pull request. Before doing so, make sure to fork the repository and create a new branch for your changes. Follow the existing coding style and guidelines, and write clear and concise commit messages. Your pull request will undergo review, and we'll work together to ensure the changes align with the project's goals.
+
+- **Feature Requests**: If you have ideas for new features or enhancements, please open an issue to discuss them. We value community feedback and want to ensure that new features align with the project's direction and objectives.
+
+- **Spread the Word**: Help us grow the FontResoft community by sharing the project with others. Whether through social media, blog posts, or word of mouth, spreading the word about FontResoft helps attract more users and contributors.
 
 ## License
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
