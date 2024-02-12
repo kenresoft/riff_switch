@@ -159,12 +159,12 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                 }),
                 type: RiffSwitchType.decorative,
                 activeColor: Colors.orange,
-                height: 166,
-                width: 1000,
-                borderWidth: 50000,
+                height: 80,
+                width: 200,
+                borderWidth: 50,
                 borderColor: Colors.red,
-                borderRadius: 1500,
-                thumbMargin: 10000,
+                borderRadius: 15,
+                thumbMargin: 10,
               ),
 
               const SizedBox(height: 30),
@@ -205,13 +205,13 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                   height: double.infinity,
                   width: double.infinity,
                   color: CupertinoColors.systemBlue,
-                  child: FlutterLogo(),
+                  child: const FlutterLogo(),
                 ),
                 inactiveChild: Container(
                   color: Colors.pink,
                   height: double.infinity,
                   width: double.infinity,
-                  child: FlutterLogo(),
+                  child: const FlutterLogo(),
                 ),
                 thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
                   if (states.contains(MaterialState.selected)) {

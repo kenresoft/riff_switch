@@ -702,10 +702,10 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     animation: _animation,
                     child: _getChild(
                       value,
-                      inactiveColor(),
+                      !value! ? inactiveColor() : Colors.transparent,
                       width - (thumbMargin * 2) - (borderWidth * 2),
                       height - (thumbMargin * 2) - (borderWidth * 2),
-                      _onDragRight ? null : RiffSwitchChild(isActiveChild: false, child: _inactiveChild),
+                      _onDragRight ? const SizedBox() : condition(!value!, _inactiveChild, const SizedBox()) /*RiffSwitchChild(isActiveChild: false, child: _inactiveChild)*/,
                     ),
                   ),
                 ),
@@ -756,10 +756,10 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
                     animation: _animation,
                     child: _getChild(
                       value,
-                      activeColor(),
+                      value! ? activeColor() : Colors.transparent,
                       width - (thumbMargin * 2) - (borderWidth * 2),
                       height - (thumbMargin * 2) - (borderWidth * 2),
-                      _onDragLeft ? null : RiffSwitchChild(isActiveChild: true, child: _activeChild),
+                      _onDragLeft ? const SizedBox() : condition(value!, _activeChild, const SizedBox()),
                     ),
                   ),
                 ),
@@ -779,7 +779,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     return widget.type == RiffSwitchType.simple ? widget.inactiveText! : RiffSwitchChild(isActiveChild: true, child: widget.inactiveChild!);
   }
 
-  Widget _getChild(bool? value, Color color, double width, double height, RiffSwitchChild? riffSwitchChild) {
+  Widget _getChild(bool? value, Color color, double width, double height, Widget riffSwitchChild) {
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
@@ -794,15 +794,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
         child: ClipRRect(
           borderRadius: BorderRadius.circular(widget.borderRadius!),
           child: ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              condition(
-                riffSwitchChild!.isActiveChild && value!,
-                color,
-                condition(riffSwitchChild.isActiveChild && value!, color, Colors.grey),
-              ),
-              BlendMode.color,
-            ),
-            child: riffSwitchChild.child,
+            colorFilter: ColorFilter.mode(color, BlendMode.color),
+            child: riffSwitchChild,
           ),
         ),
       ),
