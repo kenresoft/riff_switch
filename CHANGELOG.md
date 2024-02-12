@@ -34,3 +34,21 @@
 * Added a border to the switch. 
 * Improved logic to calculate the size of the switch. 
 * Added widget debugFillProperties.
+
+## [0.0.4] - 2024-02-12
+
+**Unreleased**
+* Switch elevation, switch animation, more switch customisations
+
+**Added**:
+
+* Introduced color corrections for decorative switch type using color filter. 
+* Implemented borderWidth, borderRadius, borderColor, and thumbMargin properties for the switch.
+* Support material and cupertino switches.
+
+**Changes**
+* Improved documentation.
+* Updated screenshots with more examples.
+
+**Fixed**
+* Bug fix and performance improvement.
