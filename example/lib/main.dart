@@ -36,6 +36,11 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
   late bool _switchValue_2 = false;
   late bool _switchValue_3 = false;
   late bool _switchValue_4 = false;
+  late bool _switchValue_5 = false;
+  late bool _switchValue_6 = false;
+  late bool _switchValue_7 = false;
+  late bool _switchValue_8 = false;
+  late bool _switchValue_9 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +56,21 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
 
               // 1
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Switch(
-                    value: _switchValue_1,
-                    onChanged: (value) => setState(() {}),
+                  RiffSwitch(
+                    value: _switchValue_9,
+                    onChanged: (value) => setState(() {
+                      _switchValue_9 = value;
+                    }),
+                    type: RiffSwitchType.material,
+                  ),
+                  RiffSwitch(
+                    value: _switchValue_9,
+                    onChanged: (value) => setState(() {
+                      _switchValue_9 = value;
+                    }),
+                    type: RiffSwitchType.cupertino,
                   ),
                   Transform.rotate(
                     angle: 0,
@@ -65,10 +81,11 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                       }),
                       type: RiffSwitchType.decorative,
                       enableSlide: false,
-                      height: 25,
+                      height: 30,
 
                       /// height must not be greater than width/2 (i.e. the max height)
-                      width: 50,
+                      width: 60,
+                      thumbMargin: 3,
                       borderRadius: 200,
                       //borderWidth: 3,
                     ),
@@ -77,9 +94,9 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                   Transform.rotate(
                     angle: 0,
                     child: RiffSwitch(
-                      value: _switchValue_1,
+                      value: _switchValue_2,
                       onChanged: (value) => setState(() {
-                        _switchValue_1 = value;
+                        _switchValue_2 = value;
                       }),
                       type: RiffSwitchType.simple,
                       enableSlide: false,
@@ -100,9 +117,9 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                 width: 160,
                 height: 30,
                 child: RiffSwitch(
-                  value: _switchValue_2,
+                  value: _switchValue_3,
                   onChanged: (value) => setState(() {
-                    _switchValue_2 = value;
+                    _switchValue_3 = value;
                   }),
                   type: RiffSwitchType.simple,
                   activeText: const Text("Accept"),
@@ -126,9 +143,9 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
 
               // 2
               RiffSwitch(
-                value: _switchValue_2,
+                value: _switchValue_4,
                 onChanged: (value) => setState(() {
-                  _switchValue_2 = value;
+                  _switchValue_4 = value;
                 }),
                 type: RiffSwitchType.decorative,
                 activeText: const Text("Accept"),
@@ -149,13 +166,13 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                 width: double.infinity,
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               // 3
               RiffSwitch(
-                value: _switchValue_3,
+                value: _switchValue_5,
                 onChanged: (value) => setState(() {
-                  _switchValue_3 = value;
+                  _switchValue_5 = value;
                 }),
                 type: RiffSwitchType.decorative,
                 activeColor: Colors.orange,
@@ -167,38 +184,76 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                 thumbMargin: 10,
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
+
+              RiffSwitch(
+                value: _switchValue_6,
+                onChanged: (value) => setState(() {
+                  _switchValue_6 = value;
+                }),
+                type: RiffSwitchType.decorative,
+                activeColor: Colors.orange,
+                activeTrackColor: Colors.purpleAccent,
+                height: 60,
+                width: 200,
+                borderWidth: 2,
+                borderColor: Colors.white,
+                borderRadius: 30,
+                thumbMargin: 3,
+              ),
+
+              const SizedBox(height: 20),
+
+              RiffSwitch(
+                value: _switchValue_6,
+                onChanged: (value) => setState(() {
+                  _switchValue_6 = value;
+                }),
+                type: RiffSwitchType.decorative,
+                activeColor: Colors.orange,
+                activeTrackColor: Colors.purpleAccent,
+                height: 40,
+                width: 100,
+                borderWidth: 2,
+                borderColor: Colors.black,
+                borderRadius: 0,
+                thumbMargin: 3,
+              ),
+
+              const SizedBox(height: 10),
 
               // 4
               SizedBox(
-                width: 160,
-                height: 160,
+                width: 260,
+                height: 100,
                 child: RiffSwitch(
-                  value: _switchValue_4,
+                  value: _switchValue_7,
                   onChanged: (value) => setState(() {
-                    _switchValue_4 = value;
+                    _switchValue_7 = value;
                   }),
                   type: RiffSwitchType.decorative,
                   activeChild: const Card(
-                    color: CupertinoColors.systemBlue,
-                    child: FlutterLogo(),
+                    color: CupertinoColors.systemTeal,
+                    child: Icon( Icons.insert_emoticon),
                   ),
+                  activeColor: Colors.red,
+                  inactiveThumbColor: Colors.teal,
                   inactiveChild: const Card(
                     color: CupertinoColors.systemYellow,
-                    child: FlutterLogo(),
+                    child: Icon(Icons.insert_emoticon_rounded),
                   ),
                   height: 60,
                   width: 120,
                   borderWidth: 1,
                   thumbMargin: 5,
-                  borderRadius: 50,
+                  borderRadius: 8,
                 ),
               ),
 
               RiffSwitch(
-                value: _switchValue_4,
+                value: _switchValue_8,
                 onChanged: (value) => setState(() {
-                  _switchValue_4 = value;
+                  _switchValue_8 = value;
                 }),
                 type: RiffSwitchType.decorative,
                 activeChild: Container(
@@ -221,9 +276,10 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                 }),
                 height: 60,
                 width: 120,
-                borderWidth: 1,
+                borderWidth: 2,
                 thumbMargin: 5,
                 borderRadius: 50,
+                borderColor: Colors.blueGrey,
               )
             ]),
           ),

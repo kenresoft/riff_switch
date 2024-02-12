@@ -1,17 +1,81 @@
 library;
 
 import 'package:extensionresoft/extensionresoft.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Enum representing the types of RiffSwitch.
-enum RiffSwitchType { simple, decorative }
+enum RiffSwitchType {
+  /// Represents a simple style switch.
+  simple,
+
+  /// Represents a decorative style switch.
+  decorative,
+  material,
+  cupertino,
+}
 
 /// Enum representing the types of content within RiffSwitch (text, icon, image, color).
-enum Type { text, icon, image, color }
+enum Type {
+  /// Text content within RiffSwitch.
+  text,
+
+  /// Icon content within RiffSwitch.
+  icon,
+
+  /// Image content within RiffSwitch.
+  image,
+
+  /// Color content within RiffSwitch.
+  color,
+}
 
 /// A Flutter widget representing a custom switch with advanced features.
 /// RiffSwitch widget allows users to toggle between two states (ON and OFF) with customizable appearance.
+///
+/// - The [value] parameter represents whether the switch is on or off.
+///
+/// - The [onChanged] callback is invoked when the user toggles the switch.
+///
+/// - The [height] and [width] parameters determine the dimensions of the switch.
+///
+/// - The [borderWidth] specifies the width of the border around the switch.
+///
+/// - The [borderRadius] controls the curvature of the switch corners.
+///
+/// - The [borderColor] sets the color of the border around the switch.
+///
+/// - The [thumbMargin] defines the margin around the thumb.
+///
+/// - The [elevation] specifies the elevation of the switch.
+///
+/// - The [animateToggle] flag determines whether to animate the switch toggling.
+///
+/// - The [activeTrackColor] sets the color of the track when the switch is on.
+///
+/// - The [activeText] represents the text displayed when the switch is on.
+///
+/// - The [inactiveText] represents the text displayed when the switch is off.
+///
+/// - The [activeChild] is the widget displayed when the switch is on.
+///
+/// - The [inactiveChild] is the widget displayed when the switch is off.
+///
+/// - The [activeColor] sets the color of the switch when it is on.
+///
+/// - The [inactiveTrackColor] sets the color of the track when the switch is off.
+///
+/// - The [inactiveThumbColor] sets the color of the thumb when the switch is off.
+///
+/// - The [trackColor] sets the color of the switch's track.
+///
+/// - The [thumbColor] sets the color of the switch's thumb.
+///
+/// - The [type] parameter determines the type of RiffSwitch.
+///
+/// - The [enableSlide] flag specifies whether the slider is slideable.
+///
 class RiffSwitch extends StatelessWidget {
   const RiffSwitch({
     super.key,
@@ -46,13 +110,13 @@ class RiffSwitch extends StatelessWidget {
 
   /// Called when the user toggles the switch on or off.
   ///
-  /// The switch passes the new value to the callback but does not actually
+  /// - The switch passes the new value to the callback but does not actually
   /// change state until the parent widget rebuilds the switch with the new
   /// value.
   ///
   /// If null, the switch will be displayed as disabled.
   ///
-  /// The callback provided to [onChanged] should update the state of the parent
+  /// - The callback provided to [onChanged] should update the state of the parent
   /// [StatefulWidget] using the [State.setState] method, so that the parent
   /// gets rebuilt; for example:
   ///
@@ -68,77 +132,80 @@ class RiffSwitch extends StatelessWidget {
   /// ```
   final ValueChanged<bool>? onChanged;
 
-  /// The height of the switch.
+  /// - The height of the switch.
   ///
   /// This value must be less than or equal to half of the width of the switch.
   /// If not provided, a default height of 50.0 will be used.
   final double? height;
 
-  /// The width of the switch.
+  /// - The width of the switch.
   ///
   /// If not provided, the width will be calculated based on the constraints.
   final double? width;
 
-  /// The width of the border around the switch.
+  /// - The width of the border around the switch.
   ///
   /// If not provided, the switch will have no border.
   final double? borderWidth;
 
-  /// The radius of the switch corners.
+  /// - The radius of the switch corners.
   ///
   /// If not provided, a default radius of 25.0 will be used.
   final double? borderRadius;
 
-  /// The color of the border around the switch.
+  /// - The color of the border around the switch.
   ///
   /// If not provided, the switch will have no border color.
   final Color? borderColor;
 
-  final double? thumbMargin;
+  /// - The margin around the thumb.
+  final double thumbMargin;
+
+  /// - The border radius of the switch.
   final double? elevation;
   final bool? animateToggle;
 
-  /// The color to use when this switch is on.
+  /// - The color to use when this switch is on.
   ///
   /// Defaults to [ColorScheme.onPrimary].
   final Color? activeColor;
 
-  /// The color to use on the track when this switch is on.
+  /// - The color to use on the track when this switch is on.
   ///
   /// Defaults to [ColorScheme.onPrimary] with the opacity set at 50%.
   final Color? activeTrackColor;
 
-  /// The color to use on the thumb when this switch is off.
+  /// - The color to use on the thumb when this switch is off.
   ///
   /// Defaults to the colors described in the Material design specification.
   final Color? inactiveThumbColor;
 
-  /// The color to use on the track when this switch is off.
+  /// - The color to use on the track when this switch is off.
   ///
   /// Defaults to the colors described in the Material design specification.
   final Color? inactiveTrackColor;
 
-  /// The text widget acting as the thumb when this switch is on.
+  /// - The text widget acting as the thumb when this switch is on.
   ///
   /// Defaults to [const Text("ON")].
   final Text? activeText;
 
-  /// The text widget acting as the thumb when this switch is off.
+  /// - The text widget acting as the thumb when this switch is off.
   ///
   /// Defaults to [const Text("OFF")].
   final Text? inactiveText;
 
-  /// The custom widget acting as the thumb when this switch is on.
+  /// - The custom widget acting as the thumb when this switch is on.
   ///
   /// Defaults to [const Text("Active")].
   final Widget? activeChild;
 
-  /// The custom widget acting as the thumb when this switch is off.
+  /// - The custom widget acting as the thumb when this switch is off.
   ///
   /// Defaults to [const Text("Inactive")].
   final Widget? inactiveChild;
 
-  /// The color of this [Switch]'s thumb.
+  /// - The color of this [Switch]'s thumb.
   ///
   /// Resolved in the following states:
   ///  * [MaterialState.selected].
@@ -161,7 +228,7 @@ class RiffSwitch extends StatelessWidget {
 
   final MaterialStateProperty<Color?>? thumbColor;
 
-  /// The color of this [Switch]'s track.
+  /// - The color of this [Switch]'s track.
   ///
   /// Resolved in the following states:
   ///  * [MaterialState.selected].
@@ -184,7 +251,7 @@ class RiffSwitch extends StatelessWidget {
 
   final MaterialStateProperty<Color?>? trackColor;
 
-  /// The type of the RiffSwitch.
+  /// - The type of the RiffSwitch.
   ///
   /// Defaults to `Type.text`.
   ///
@@ -216,6 +283,8 @@ class RiffSwitch extends StatelessWidget {
     return switch (this) {
       RiffSwitch(_type: RiffSwitchType.simple) => _buildSimpleSwitch(),
       RiffSwitch(_type: RiffSwitchType.decorative) => _buildDecorativeSwitch(),
+      RiffSwitch(_type: RiffSwitchType.material) => _buildMaterialSwitch(),
+      RiffSwitch(_type: RiffSwitchType.cupertino) => _buildCupertinoSwitch(),
     };
   }
 
@@ -234,6 +303,28 @@ class RiffSwitch extends StatelessWidget {
       trackColor: trackColor,
       thumbColor: thumbColor,
       enableSlide: enableSlide,
+    );
+  }
+
+  Widget _buildMaterialSwitch() {
+    return Switch(
+      key: key,
+      value: value,
+      onChanged: onChanged,
+      activeTrackColor: activeTrackColor,
+      activeColor: activeColor,
+      inactiveTrackColor: inactiveTrackColor,
+      inactiveThumbColor: inactiveThumbColor,
+      trackColor: trackColor,
+      thumbColor: thumbColor,
+    );
+  }
+
+  Widget _buildCupertinoSwitch() {
+    return CupertinoSwitch(
+      value: value,
+      onChanged: onChanged,
+      activeColor: activeColor,
     );
   }
 
@@ -813,16 +904,24 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<bool>('value', widget.value, showName: true, defaultValue: false));
-    properties.add(DoubleProperty('height', widget.height, defaultValue: null));
-    properties.add(DoubleProperty('width', widget.width, defaultValue: null));
-    properties.add(DoubleProperty('borderWidth', widget.borderWidth, defaultValue: null));
-    properties.add(DoubleProperty('borderRadius', widget.borderRadius, defaultValue: null));
-    properties.add(ColorProperty('borderColor', widget.borderColor, defaultValue: null));
+    properties.add(ObjectFlagProperty<ValueChanged<bool>>.has('onChanged', widget.onChanged));
+    properties.add(DoubleProperty('height', widget.height, defaultValue: 30));
+    properties.add(DoubleProperty('width', widget.width, defaultValue: 150));
+    properties.add(DoubleProperty('borderWidth', widget.borderWidth, defaultValue: 0));
+    properties.add(DoubleProperty('borderRadius', widget.borderRadius, defaultValue: 25));
+    properties.add(ColorProperty('borderColor', widget.borderColor, defaultValue: Colors.blue));
+    properties.add(DoubleProperty('thumbMargin', widget.thumbMargin, defaultValue: 0));
+    properties.add(DoubleProperty('elevation', widget.elevation, defaultValue: 0));
+    properties.add(FlagProperty('animateToggle', value: widget.animateToggle, ifTrue: 'toggle animation enabled'));
     properties.add(ColorProperty('activeColor', widget.activeColor, defaultValue: null));
     properties.add(ColorProperty('activeTrackColor', widget.activeTrackColor, defaultValue: null));
     properties.add(ColorProperty('inactiveTrackColor', widget.inactiveTrackColor, defaultValue: null));
     properties.add(ColorProperty('inactiveThumbColor', widget.inactiveThumbColor, defaultValue: null));
-    properties.add(ObjectFlagProperty<ValueChanged<bool>>.has('onChanged', widget.onChanged));
+    properties.add(DiagnosticsProperty<Text>('activeText', widget.activeText, defaultValue: const Text('ON')));
+    properties.add(DiagnosticsProperty<Text>('inactiveText', widget.inactiveText, defaultValue: const Text('OFF')));
+    properties.add(DiagnosticsProperty<Widget>('activeChild', widget.activeChild, defaultValue: const Card(color: Colors.black87)));
+    properties.add(DiagnosticsProperty<Widget>('inactiveChild', widget.inactiveChild, defaultValue: const Card(color: Colors.black38)));
+    properties.add(EnumProperty<RiffSwitchType>('type', widget.type));
     properties.add(FlagProperty('enableSlide', value: widget.enableSlide, ifTrue: 'slide enabled'));
   }
 }
