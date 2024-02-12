@@ -31,7 +31,7 @@ To use RiffSwitch in your Flutter project, add the following to your `pubspec.ya
 
 ```yaml
 dependencies:
-  riff_switch: ^0.0.3
+  riff_switch: ^0.0.4
 ```
 Then, run:
 
@@ -173,15 +173,41 @@ More examples from [main.dart](example/lib/main.dart)
   )
 ```
 
+> **NOTE**: It's important to note that the `thumbColor` property takes precedence over any color applied directly to the `active` or `inactive` thumb, 
+whether through a container widget or any other means.
+This allows for consistent and predictable customization of the thumb's color across different states of the switch, 
+ensuring a cohesive visual appearance throughout the application.
+
 ## Screenshots
 
 <img alt="Screenshot 1" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_1.png?raw=true" title="Screenshot 1" width="220"/>
 
 <img alt="Screenshot 2" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_2.png?raw=true" title="Screenshot 2" width="220"/>
 
+<img alt="Screenshot 3" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_3.png?raw=true" title="Screenshot 3" width="220"/>
+
+<img alt="Screenshot 4" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_4.png?raw=true" title="Screenshot 4" width="220"/>
+
+<img alt="Screenshot 5" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_5.png?raw=true" title="Screenshot 5" width="220"/>
+
+<img alt="Screenshot 6" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_6.png?raw=true" title="Screenshot 6" width="220"/>
+
 <img alt="Screen Record 1" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_1.gif?raw=true" title="Screen Record 1" width="220"/>
 
 <img alt="Screen Record 2" height="500" src="https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_2.gif?raw=true" title="Screen Record 2" width="220"/>
+
+
+| Screenshot 1                                                                                                | Screenshot 2                                                                                                | Screenshot 3                                                                                                |
+|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| ![Screenshot 1](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_1.png?raw=true) | ![Screenshot 2](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_2.png?raw=true) | ![Screenshot 3](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_3.png?raw=true) |
+
+| Screenshot 4                                                                                                | Screenshot 5                                                                                                | Screenshot 6                                                                                                |
+|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| ![Screenshot 4](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_4.png?raw=true) | ![Screenshot 5](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_5.png?raw=true) | ![Screenshot 6](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screenshot_6.png?raw=true) |
+
+| Screen Record 1                                                                                                      | Screen Record 2                                                                                                      |
+|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| ![Screen Record 1](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_1.gif?raw=true) | ![Screen Record 2](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_2.gif?raw=true) |
 
 
 ## Contributing
