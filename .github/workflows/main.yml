@@ -3,10 +3,10 @@ name: Flutter Package CI
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -104,7 +104,7 @@ jobs:
   publish:
     needs: [build, test-example]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/master')
 
     steps:
       - name: Checkout repository
