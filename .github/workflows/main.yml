@@ -1,0 +1,133 @@
+name: Flutter Package CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest]
+        flutter-version: ['3.22.1']
+        working-directory: ['.']
+      fail-fast: false
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ matrix.flutter-version }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.flutter-version }}
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ matrix.working-directory }}
+
+      - name: Analyze code
+        run: dart analyze .
+        working-directory: ${{ matrix.working-directory }}
+
+      - name: Run lint
+        run: flutter analyze
+        working-directory: ${{ matrix.working-directory }}
+
+      - name: Run tests
+        run: flutter test --coverage
+        working-directory: ${{ matrix.working-directory }}
+
+      - name: Upload code coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+
+  test-example:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest]
+        flutter-version: ['3.22.1']
+        working-directory: ['example']
+      fail-fast: false
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ matrix.flutter-version }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.flutter-version }}
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ matrix.working-directory }}
+
+      - name: Analyze code
+        run: dart analyze .
+        working-directory: ${{ matrix.working-directory }}
+
+      - name: Run lint
+        run: flutter analyze
+        working-directory: ${{ matrix.working-directory }}
+
+      - name: Run tests
+        run: flutter test
+        working-directory: ${{ matrix.working-directory }}
+
+  publish:
+    needs: [build, test-example]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/master')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-cache-${{ matrix.flutter-version }}
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ matrix.flutter-version }}
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Publish package
+        env:
+          PUB_TOKEN: ${{ secrets.PUB_TOKEN }}
+        run: |
+          flutter pub publish --force
