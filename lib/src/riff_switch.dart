@@ -249,7 +249,7 @@ class RiffSwitch extends StatelessWidget {
   /// });
   /// ```
 
-  final MaterialStateProperty<Color?>? trackColor;
+  final WidgetStateProperty<Color?>? trackColor;
 
   /// - The type of the RiffSwitch.
   ///
