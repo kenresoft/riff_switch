@@ -128,8 +128,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Publish package
-        env:
-          PUB_TOKEN: ${{ secrets.PUB_TOKEN }}
-        run: |
-          flutter pub publish --force
+#      - name: Publish package
+#        env:
+#          PUB_TOKEN: ${{ secrets.PUB_TOKEN }}
+#        run: |
+#          flutter pub publish --force
