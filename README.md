@@ -1,29 +1,33 @@
 # RiffSwitch
 
+[![Build](https://github.com/kenresoft/riff_switch/actions/workflows/main.yml/badge.svg)](https://github.com/kenresoft/riff_switch/actions/workflows/main.yml)
 [![pub package](https://img.shields.io/pub/v/riff_switch.svg?label=riff_switch&color=blue)](https://pub.dev/packages/riff_switch)
 [![pub points](https://img.shields.io/pub/points/riff_switch?logo=dart)](https://pub.dev/packages/riff_switch/score)
 [![popularity](https://img.shields.io/pub/popularity/riff_switch?logo=dart&color=yellow)](https://pub.dev/packages/riff_switch/score)
 [![likes](https://img.shields.io/pub/likes/riff_switch?logo=dart&color=red)](https://pub.dev/packages/riff_switch/score)
-<a href="https://github.com/kenresoft/riff_switch">![Star on Github](https://img.shields.io/github/stars/kenresoft/riff_switch.svg?style=flat&logo=github&colorB=deeppink&label=stars)</a>
-<a href="https://github.com/Solido/awesome-flutter">![Awesome Flutter](https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square)</a>
-<a href="https://opensource.org/license/bsd-3-clause">![License: BSD](https://img.shields.io/badge/license-BSD_3--Clause-teal.svg)</a>
+[![Star on Github](https://img.shields.io/github/stars/kenresoft/riff_switch.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/kenresoft/riff_switch)
+[![Awesome Flutter](https://img.shields.io/badge/Awesome-Flutter-blue.svg?longCache=true&style=flat-square)](https://github.com/Solido/awesome-flutter)
+[![License: BSD](https://img.shields.io/badge/license-BSD_3--Clause-teal.svg)](https://opensource.org/license/bsd-3-clause)
 
-Breathe life into your Flutter UI with _**RiffSwitch**_, the switch library that empowers effortless sliding effects and captivating animations. 
-Customize the sliding behavior for a unique user experience, while interactive dragging fosters a sense of control and responsiveness. 
-Witness smooth state transitions as the switch flips, adding a touch of visual polish to your app. 
-Whether you prefer simple or decorative switch types, _**RiffSwitch**_ seamlessly integrates into your UI, 
+Breathe life into your Flutter UI with _**RiffSwitch**_, the switch library that empowers effortless sliding effects and captivating animations.
+Customize the sliding behavior for a unique user experience, while interactive dragging fosters a sense of control and responsiveness.
+Witness smooth state transitions as the switch flips, adding a touch of visual polish to your app.
+Whether you prefer simple or decorative switch types, _**RiffSwitch**_ seamlessly integrates into your UI,
 transforming basic interactions into engaging experiences.
 
 Experience seamless transitions and engaging interactions with _**RiffSwitch**_.
 
 ## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Examples](#examples)
-- [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
+
+- [RiffSwitch](#riffswitch)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Features](#features)
+  - [Examples](#examples)
+  - [Screenshots](#screenshots)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Installation
 
@@ -33,6 +37,7 @@ To use RiffSwitch in your Flutter project, add the following to your `pubspec.ya
 dependencies:
   riff_switch: ^0.0.4
 ```
+
 Then, run:
 
 ```bash
@@ -43,7 +48,7 @@ flutter pub get
 
 Import the package:
 
-```dart 
+```dart
 import 'package:riff_switch/riff_switch.dart';
 ```
 
@@ -64,16 +69,17 @@ RiffSwitch(
 
 ## Features
 
-* **Customization**: Customize the appearance with various options such as colors, texts, and child widgets.
-* **Sliding Effects**: RiffSwitch supports sliding effects for a modern and interactive user experience.
-* **Enum Types**: Choose between simple and decorative switch types based on your UI requirements.
-* **Animation**:
-  * **Smooth Transitions**: Enjoy smooth animations when the switch transitions between on and off states. 
-  * **Interactive Dragging**: The sliding effects are accompanied by interactive dragging animations for a responsive feel.
+- **Customization**: Customize the appearance with various options such as colors, texts, and child widgets.
+- **Sliding Effects**: RiffSwitch supports sliding effects for a modern and interactive user experience.
+- **Enum Types**: Choose between simple and decorative switch types based on your UI requirements.
+- **Animation**:
+  - **Smooth Transitions**: Enjoy smooth animations when the switch transitions between on and off states.
+  - **Interactive Dragging**: The sliding effects are accompanied by interactive dragging animations for a responsive feel.
 
 ## Examples
 
 Here's a basic example of how to use RiffSwitch:
+
 ```dart
 import 'package:flutter/material.dart';
 import 'package:riff_switch/riff_switch.dart';
@@ -105,7 +111,9 @@ class MyApp extends StatelessWidget {
 }
 
 ```
+
 More examples from [main.dart](example/lib/main.dart)
+
 ```dart
 // 1
   RiffSwitch(
@@ -173,9 +181,9 @@ More examples from [main.dart](example/lib/main.dart)
   )
 ```
 
-> **NOTE**: It's important to note that the `thumbColor` property takes precedence over any color applied directly to the `active` or `inactive` thumb, 
+> **NOTE**: It's important to note that the `thumbColor` property takes precedence over any color applied directly to the `active` or `inactive` thumb,
 whether through a container widget or any other means.
-This allows for consistent and predictable customization of the thumb's color across different states of the switch, 
+This allows for consistent and predictable customization of the thumb's color across different states of the switch,
 ensuring a cohesive visual appearance throughout the application.
 
 ## Screenshots
@@ -192,8 +200,8 @@ ensuring a cohesive visual appearance throughout the application.
 |----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
 | ![Screen Record 1](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_1.gif?raw=true) | ![Screen Record 2](https://github.com/kenresoft/riff_switch/blob/master/screenshots/Screen_recording_2.gif?raw=true) |
 
-
 ## Contributing
+
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
 - **Issues**: If you encounter any bugs, have feature requests, or want to suggest improvements, please open an issue on our GitHub repository. Provide as much detail as possible to help us understand the problem or idea better.
@@ -205,4 +213,5 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 - **Spread the Word**: Help us grow the FontResoft community by sharing the project with others. Whether through social media, blog posts, or word of mouth, spreading the word about FontResoft helps attract more users and contributors.
 
 ## License
+
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
