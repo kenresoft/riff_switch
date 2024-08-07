@@ -1,4 +1,5 @@
 name: Build
+run-name: Flutter Package CI Build by ${{ github.actor }}
 
 on:
   push:
@@ -62,7 +63,7 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest]
-        flutter-version: ['3.22.1']
+        flutter-version: ['3.19', '3.22.1', '3.24']
         working-directory: ['example']
       fail-fast: false
 

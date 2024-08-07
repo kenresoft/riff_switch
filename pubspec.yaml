@@ -12,13 +12,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  extensionresoft: ^0.0.3
+  extensionresoft: ^0.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
 
 # The following section is specific to Flutter packages.
 flutter:
+  uses-material-design: true
+# removing this line sets it to false;
+# but this is also set to true in extensionresoft,
+# and should be enable here too as it depends on the package.
 
