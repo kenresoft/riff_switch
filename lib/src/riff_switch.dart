@@ -208,41 +208,41 @@ class RiffSwitch extends StatelessWidget {
   /// - The color of this [Switch]'s thumb.
   ///
   /// Resolved in the following states:
-  ///  * [MaterialState.selected].
-  //  * [MaterialState.hovered].
-  //  * [MaterialState.focused].
-  ///  * [MaterialState.disabled].
+  ///  * [WidgetState.selected].
+  //  * [WidgetState.hovered].
+  //  * [WidgetState.focused].
+  ///  * [WidgetState.disabled].
   ///
   /// *sample implementation*
   /// ```
-  /// MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-  ///   if (states.contains(MaterialState.disabled)) {
+  /// WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+  ///   if (states.contains(WidgetState.disabled)) {
   ///    return Colors.blue;
   ///   }
-  ///   if (states.contains(MaterialState.selected)) {
+  ///   if (states.contains(WidgetState.selected)) {
   ///     return Colors.orange;
   ///   }
   ///   return Colors.pinkAccent;
   /// });
   /// ```
 
-  final MaterialStateProperty<Color?>? thumbColor;
+  final WidgetStateProperty<Color?>? thumbColor;
 
   /// - The color of this [Switch]'s track.
   ///
   /// Resolved in the following states:
-  ///  * [MaterialState.selected].
-  //  * [MaterialState.hovered].
-  //  * [MaterialState.focused].
-  ///  * [MaterialState.disabled].
+  ///  * [WidgetState.selected].
+  //  * [WidgetState.hovered].
+  //  * [WidgetState.focused].
+  ///  * [WidgetState.disabled].
   ///
   /// *sample implementation*
   /// ```
-  /// MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-  ///   if (states.contains(MaterialState.disabled)) {
+  /// WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+  ///   if (states.contains(WidgetState.disabled)) {
   ///    return Colors.grey;
   ///   }
-  ///   if (states.contains(MaterialState.selected)) {
+  ///   if (states.contains(WidgetState.selected)) {
   ///     return Colors.white70;
   ///   }
   ///   return Colors.green;
@@ -422,8 +422,8 @@ class _SimpleSwitch extends StatefulWidget {
   final Text? inactiveText;
   final Widget? activeChild;
   final Widget? inactiveChild;
-  final MaterialStateProperty<Color?>? thumbColor;
-  final MaterialStateProperty<Color?>? trackColor;
+  final WidgetStateProperty<Color?>? thumbColor;
+  final WidgetStateProperty<Color?>? trackColor;
   final RiffSwitchType type;
   final bool? enableSlide;
 
@@ -484,21 +484,21 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
     widget.onChanged?.call(value!);
   }
 
-  MaterialStateProperty<Color?> get _widgetThumbColor {
-    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.disabled)) {
+  WidgetStateProperty<Color?> get _widgetThumbColor {
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
         return widget.inactiveThumbColor;
       }
-      if (states.contains(MaterialState.selected)) {
+      if (states.contains(WidgetState.selected)) {
         return widget.activeColor;
       }
       return widget.inactiveThumbColor;
     });
   }
 
-  MaterialStateProperty<Color?> get _widgetTrackColor {
-    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
+  WidgetStateProperty<Color?> get _widgetTrackColor {
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
         return widget.activeTrackColor;
       }
       return widget.inactiveTrackColor;
@@ -513,8 +513,8 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
 
     // Colors need to be resolved in selected and non selected states separately
     // so that they can be lerped between. [Reference: Material Switch]
-    final Set<MaterialState> activeStates = states..add(MaterialState.selected);
-    final Set<MaterialState> inactiveStates = states..remove(MaterialState.selected);
+    final Set<WidgetState> activeStates = states..add(WidgetState.selected);
+    final Set<WidgetState> inactiveStates = states..remove(WidgetState.selected);
 
     final Color? activeThumbColor = widget.thumbColor?.resolve(activeStates) ?? _widgetThumbColor.resolve(activeStates) ?? switchTheme.thumbColor?.resolve(activeStates);
 
@@ -586,7 +586,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
           if (widget.inactiveTrackColor != null) {
             return widget.inactiveTrackColor!;
           }
-          return theme.colorScheme.surfaceVariant;
+          return theme.colorScheme.surfaceContainerHighest;
         }
       }
     }
@@ -947,33 +947,33 @@ class _SwitchDefaultsM3 extends SwitchThemeData {
   final ColorScheme _colors;
 
   @override
-  MaterialStateProperty<Color> get thumbColor {
-    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.disabled)) {
-        if (states.contains(MaterialState.selected)) {
+  WidgetStateProperty<Color> get thumbColor {
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        if (states.contains(WidgetState.selected)) {
           return _colors.surface.withOpacity(1.0);
         }
         return _colors.onSurface.withOpacity(0.38);
       }
-      if (states.contains(MaterialState.selected)) {
-        if (states.contains(MaterialState.pressed)) {
+      if (states.contains(WidgetState.selected)) {
+        if (states.contains(WidgetState.pressed)) {
           return _colors.primaryContainer;
         }
-        if (states.contains(MaterialState.hovered)) {
+        if (states.contains(WidgetState.hovered)) {
           return _colors.primaryContainer;
         }
-        if (states.contains(MaterialState.focused)) {
+        if (states.contains(WidgetState.focused)) {
           return _colors.primaryContainer;
         }
         return _colors.onPrimary;
       }
-      if (states.contains(MaterialState.pressed)) {
+      if (states.contains(WidgetState.pressed)) {
         return _colors.onSurfaceVariant;
       }
-      if (states.contains(MaterialState.hovered)) {
+      if (states.contains(WidgetState.hovered)) {
         return _colors.onSurfaceVariant;
       }
-      if (states.contains(MaterialState.focused)) {
+      if (states.contains(WidgetState.focused)) {
         return _colors.onSurfaceVariant;
       }
       return _colors.outline;
@@ -981,61 +981,61 @@ class _SwitchDefaultsM3 extends SwitchThemeData {
   }
 
   @override
-  MaterialStateProperty<Color> get trackColor {
-    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.disabled)) {
-        if (states.contains(MaterialState.selected)) {
+  WidgetStateProperty<Color> get trackColor {
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.disabled)) {
+        if (states.contains(WidgetState.selected)) {
           return _colors.onSurface.withOpacity(0.12);
         }
-        return _colors.surfaceVariant.withOpacity(0.12);
+        return _colors.surfaceContainerHighest.withOpacity(0.12);
       }
-      if (states.contains(MaterialState.selected)) {
-        if (states.contains(MaterialState.pressed)) {
+      if (states.contains(WidgetState.selected)) {
+        if (states.contains(WidgetState.pressed)) {
           return _colors.primary;
         }
-        if (states.contains(MaterialState.hovered)) {
+        if (states.contains(WidgetState.hovered)) {
           return _colors.primary;
         }
-        if (states.contains(MaterialState.focused)) {
+        if (states.contains(WidgetState.focused)) {
           return _colors.primary;
         }
         return _colors.primary;
       }
-      if (states.contains(MaterialState.pressed)) {
-        return _colors.surfaceVariant;
+      if (states.contains(WidgetState.pressed)) {
+        return _colors.surfaceContainerHighest;
       }
-      if (states.contains(MaterialState.hovered)) {
-        return _colors.surfaceVariant;
+      if (states.contains(WidgetState.hovered)) {
+        return _colors.surfaceContainerHighest;
       }
-      if (states.contains(MaterialState.focused)) {
-        return _colors.surfaceVariant;
+      if (states.contains(WidgetState.focused)) {
+        return _colors.surfaceContainerHighest;
       }
-      return _colors.surfaceVariant;
+      return _colors.surfaceContainerHighest;
     });
   }
 
   @override
-  MaterialStateProperty<Color?> get overlayColor {
-    return MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
-        if (states.contains(MaterialState.pressed)) {
+  WidgetStateProperty<Color?> get overlayColor {
+    return WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+      if (states.contains(WidgetState.selected)) {
+        if (states.contains(WidgetState.pressed)) {
           return _colors.primary.withOpacity(0.12);
         }
-        if (states.contains(MaterialState.hovered)) {
+        if (states.contains(WidgetState.hovered)) {
           return _colors.primary.withOpacity(0.08);
         }
-        if (states.contains(MaterialState.focused)) {
+        if (states.contains(WidgetState.focused)) {
           return _colors.primary.withOpacity(0.12);
         }
         return null;
       }
-      if (states.contains(MaterialState.pressed)) {
+      if (states.contains(WidgetState.pressed)) {
         return _colors.onSurface.withOpacity(0.12);
       }
-      if (states.contains(MaterialState.hovered)) {
+      if (states.contains(WidgetState.hovered)) {
         return _colors.onSurface.withOpacity(0.08);
       }
-      if (states.contains(MaterialState.focused)) {
+      if (states.contains(WidgetState.focused)) {
         return _colors.onSurface.withOpacity(0.12);
       }
       return null;
