@@ -45,7 +45,7 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.onBackground,
+      backgroundColor: Theme.of(context).colorScheme.onSurface,
       appBar: AppBar(title: Text(widget._title)),
       body: Center(
         child: SingleChildScrollView(
@@ -124,14 +124,14 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                   type: RiffSwitchType.simple,
                   activeText: const Text("Accept"),
                   inactiveText: const Text("Decline"),
-                  thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                    if (states.contains(MaterialState.selected)) {
+                  thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                    if (states.contains(WidgetState.selected)) {
                       return Colors.greenAccent;
                     }
                     return Colors.pinkAccent;
                   }),
-                  trackColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                    if (states.contains(MaterialState.selected)) {
+                  trackColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                    if (states.contains(WidgetState.selected)) {
                       return Colors.grey;
                     }
                     return Colors.grey;
@@ -150,14 +150,14 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                 type: RiffSwitchType.decorative,
                 activeText: const Text("Accept"),
                 inactiveText: const Text("Decline"),
-                thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                  if (states.contains(MaterialState.selected)) {
+                thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                  if (states.contains(WidgetState.selected)) {
                     return Colors.greenAccent;
                   }
                   return Colors.pinkAccent;
                 }),
-                trackColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                  if (states.contains(MaterialState.selected)) {
+                trackColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                  if (states.contains(WidgetState.selected)) {
                     return Colors.grey;
                   }
                   return Colors.grey;
@@ -268,8 +268,8 @@ class _RiffSwitchExampleState extends State<RiffSwitchExample> {
                   width: double.infinity,
                   child: const FlutterLogo(),
                 ),
-                thumbColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
-                  if (states.contains(MaterialState.selected)) {
+                thumbColor: WidgetStateProperty.resolveWith((Set<WidgetState> states) {
+                  if (states.contains(WidgetState.selected)) {
                     return Colors.greenAccent;
                   }
                   return Colors.yellow;
