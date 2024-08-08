@@ -727,7 +727,7 @@ class _SimpleSwitchState extends State<_SimpleSwitch> with TickerProviderStateMi
           assert(height <= width / 2, '\n\nHeight must not be greater than half of the width. \nYour supplied height is: $height and width is: $width\n');
         }
 
-        debugPrint(width.toString());
+        // debugPrint(width.toString()); // Commented this out
         return UnconstrainedBox(
           child: Container(
             width: width,
