@@ -3,6 +3,10 @@ description: Experience seamless transitions and engaging interactions with Riff
   The switch library that empowers effortless sliding effects and captivating animations.
 version: 0.0.4
 homepage: https://github.com/kenresoft/riff_switch
+repository: https://github.com/kenresoft/riff_switch
+issue_tracker: https://github.com/kenresoft/riff_switch/issues
+#documentation: https://kenresoft.dev/riff_switch
+topics: [riff_switch, switch]
 
 environment:
   sdk: '>=3.4.1 <4.0.0'
