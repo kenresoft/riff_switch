@@ -1,6 +1,6 @@
-# riff_switch_examples
+# example
 
-RiffSwitch project examples
+RiffSwitch example Flutter project.
 
 ## Getting Started
 
